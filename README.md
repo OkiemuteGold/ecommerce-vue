@@ -1,5 +1,7 @@
 # ecommerce
 
+### ecommerce app made with vue.js
+
 ## Project setup
 ```
 npm install
