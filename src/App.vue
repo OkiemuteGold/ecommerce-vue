@@ -20,20 +20,21 @@ body {
     font-family: "Montserrat", sans-serif;
 }
 
-body {
+body,
+#app {
     box-sizing: border-box;
     overflow-x: hidden;
 }
 
 #app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
+    // font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: #2c3e50;
 }
 
 #nav {
-    padding: 30px;
+    // padding: 30px;
 
     a {
         font-weight: bold;
@@ -70,15 +71,10 @@ img {
     padding-bottom: 70px;
 }
 
-.section-padd-50 {
-    padding-top: 50px;
-    padding-bottom: 50px;
-}
-
 .no-top {
     padding-top: 0;
 }
-.no-bot {
+.no-bottom {
     padding-bottom: 0;
 }
 </style>

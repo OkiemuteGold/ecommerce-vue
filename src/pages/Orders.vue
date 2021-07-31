@@ -1,7 +1,28 @@
 <template>
-    <div class="orders-container">
+    <div class="overview-container">
         <div class="container">
-            <h1>Orders Page</h1>
+            <div class="intro p-lg-4">
+                <div
+                    class="row h-100 justify-content-center align-items-center"
+                >
+                    <div class="col-md-6">
+                        <div class="left-content pr-lg-5">
+                            <h3>Orders Page</h3>
+                            <p>
+                                Lorem ipsum dolor sit amet consectetur
+                                adipisicing elit. Laborum, fugiat?
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <img
+                            src="/img/svg/orders.svg"
+                            alt=""
+                            class="img-fluid"
+                        />
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -11,4 +32,9 @@ export default {};
 </script>
 
 <style scoped lang="scss">
+@media screen and (max-width: 426px) {
+    .left-content {
+        padding: 0 20px 30px;
+    }
+}
 </style>

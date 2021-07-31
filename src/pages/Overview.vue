@@ -1,16 +1,16 @@
 <template>
     <div class="overview-container">
         <div class="container">
-            <h2>Overview Page</h2>
-            <div class="intro section-padd-50">
-                <div class="row justify-content-center align-items-center">
+            <div class="intro p-lg-4">
+                <div
+                    class="row h-100 justify-content-center align-items-center"
+                >
                     <div class="col-md-6">
-                        <div class="left-content">
-                            <h3>Best Products</h3>
+                        <div class="left-content pr-lg-5">
+                            <h3>Overview Page</h3>
                             <p>
-                                Lorem ipsum dolor sit, amet consectetur
-                                adipisicing elit. Quisquam ipsum voluptates
-                                corrupti repudiandae impedit sit?
+                                Lorem, ipsum dolor sit amet consectetur
+                                adipisicing elit. Accusantium, vitae.
                             </p>
                         </div>
                     </div>

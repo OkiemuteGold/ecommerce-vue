@@ -1,11 +1,8 @@
 <template>
     <div class="settings-container">
         <div class="container">
+            <h2 class="title">Settings</h2>
             <div class="row">
-                <div class="my-3">
-                    <h2>Settings</h2>
-                </div>
-
                 <div class="form-group col-md-12">
                     <div class="custom-control custom-switch">
                         <input

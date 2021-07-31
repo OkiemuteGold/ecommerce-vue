@@ -7,7 +7,7 @@
             <div class="sidebar-content">
                 <!-- sidebar-brand  -->
                 <div class="sidebar-item sidebar-brand">
-                    <router-link to="/admin">E-SHOP</router-link>
+                    <router-link to="/admin/overview">E-SHOP</router-link>
                     <div id="close-sidebar" @click="closeMenu">
                         <i class="fas fa-times"></i>
                     </div>
@@ -129,8 +129,10 @@
         </nav>
 
         <!-- page-content  -->
-        <main class="page-content pt-2">
-            <router-view />
+        <main class="page-content">
+            <div class="px-4">
+                <router-view />
+            </div>
         </main>
     </div>
 </template>

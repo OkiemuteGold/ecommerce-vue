@@ -5,6 +5,7 @@
                 <a class="navbar-brand" href="#"
                     ><span>E</span>-<span>Store</span></a
                 >
+
                 <button
                     class="navbar-toggler"
                     type="button"
@@ -16,6 +17,7 @@
                 >
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div
                     class="collapse navbar-collapse"
                     id="navbarSupportedContent"
@@ -37,17 +39,30 @@
                             </router-link>
                         </li>
                     </ul>
-                    <form class="d-flex">
+                    <form
+                        class="
+                            form-inline
+                            d-flex
+                            flex-column flex-lg-row
+                            align-items-start
+                        "
+                    >
                         <input
                             class="form-control me-2"
                             type="search"
                             placeholder="Search"
                             aria-label="Search"
                         />
-                        <button class="btn btn-outline-success" type="submit">
-                            Search
-                        </button>
+                        <a
+                            class="btn btn-success mt-3 mt-lg-0"
+                            data-bs-toggle="modal"
+                            data-bs-target="#loginModal"
+                        >
+                            Get Started
+                        </a>
                     </form>
+
+                    <Login />
                 </div>
             </div>
         </nav>
@@ -55,8 +70,59 @@
 </template>
 
 <script>
-export default {};
+import Login from "./Login.vue";
+export default {
+    components: { Login },
+};
 </script>
 
 <style scoped lang="scss">
+.navbar {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.header-sticky {
+    background: #f1f1f1;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.075);
+}
+
+.nav-item {
+    position: relative;
+
+    &:hover > .nav-link:after {
+        display: block;
+    }
+}
+
+.nav-link:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    bottom: 0;
+    width: 60%;
+    height: 3.2px;
+    border-radius: 50px 50px 0 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: none;
+    transition: 0.5s ease;
+}
+
+.btn {
+    color: #fff !important;
+
+    &:hover {
+        background: transparent;
+        border-color: #198754;
+        color: #198754 !important;
+    }
+}
+
+input:hover,
+input:focus {
+    box-shadow: none;
+    border-color: #198754;
+}
 </style>
