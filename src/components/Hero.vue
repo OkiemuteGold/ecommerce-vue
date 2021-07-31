@@ -21,7 +21,11 @@
                 </div>
                 <div class="col-md-6 col-lg-7">
                     <div class="image">
-                        <img src="img/svg/graphic.svg" alt="hero image" />
+                        <img
+                            src="img/svg/graphic.svg"
+                            alt="hero image"
+                            class="img-fluid"
+                        />
                     </div>
                 </div>
             </div>
@@ -71,8 +75,13 @@ export default {};
 
 // Media Queries
 @media screen and (max-width: 426px) {
+    .hero {
+        max-height: 400px;
+    }
+
     .hero-content {
-        padding: 1rem 1rem 0;
+        padding: 2rem 1rem 0;
+        text-align: center;
     }
 
     .image {

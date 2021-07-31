@@ -1,27 +1,23 @@
 <template>
     <div id="app">
         <div>
-            <Navbar />
             <router-view />
         </div>
     </div>
 </template>
 
 <script>
-import Navbar from "./components/Navbar";
-
-export default {
-    components: {
-        Navbar,
-    },
-};
+export default {};
 </script>
 
 <style lang="scss">
+// @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap');
+
 *,
 body {
     margin: 0;
     padding: 0;
+    font-family: "Montserrat", sans-serif;
 }
 
 body {
@@ -49,8 +45,8 @@ body {
     }
 }
 
-a.btn:active,
-a.btn:focus {
+.btn:active,
+.btn:focus {
     box-shadow: none !important;
 }
 
@@ -68,6 +64,17 @@ img {
     padding-top: 100px;
     padding-bottom: 100px;
 }
+
+.section-padd-70 {
+    padding-top: 70px;
+    padding-bottom: 70px;
+}
+
+.section-padd-50 {
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
 .no-top {
     padding-top: 0;
 }

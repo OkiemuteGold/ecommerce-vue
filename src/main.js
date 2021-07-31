@@ -8,6 +8,9 @@ window.$ = window.jQuery = jQuery;
 
 import "popper.js";
 import "bootstrap";
+// import 'bootstrap/dist/css/bootstrap.css'
+// import '../node_modules/bootstrap/dist/css/bootstrap.css';
+
 import "./assets/app.scss";
 
 Vue.config.productionTip = false

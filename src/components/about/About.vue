@@ -4,7 +4,11 @@
             <div class="row justify-content-center align-items-center">
                 <div class="col-md-6">
                     <div class="image">
-                        <img src="img/svg/product.svg" alt="hero image" />
+                        <img
+                            src="img/svg/product.svg"
+                            alt="about image"
+                            class="img-fluid"
+                        />
                     </div>
                 </div>
 
@@ -73,6 +77,10 @@ export default {};
 @media screen and (max-width: 426px) {
     .image {
         padding-top: 0;
+    }
+
+    .right-content {
+        text-align: center;
     }
 }
 </style>
