@@ -13,7 +13,7 @@
                 </div>
 
                 <div class="col-md-6">
-                    <div class="right-content">
+                    <div class="right-content side-content-shadow">
                         <h2 class="title">Learn More About Us</h2>
                         <p>
                             Lorem ipsum dolor sit amet, consectetur adipisicing
@@ -22,9 +22,7 @@
                         </p>
 
                         <div class="about-button">
-                            <button class="btn btn-outline-primary">
-                                Browse Products
-                            </button>
+                            <button class="btn">Browse Products</button>
                         </div>
                     </div>
                 </div>
@@ -44,8 +42,6 @@ export default {};
 
 .right-content {
     padding: 20px;
-    border-radius: 0 20px 20% 5%;
-    box-shadow: 0px 20px 0px #fafafa;
 
     & > .title {
         text-transform: capitalize;
@@ -58,14 +54,14 @@ export default {};
 }
 
 .about-button button {
-    color: #2c84a7;
-    border-color: #2c84a7;
+    color: var(--customBlue);
+    border-color: var(--customBlue);
 
     &:hover,
     &:active,
     &:focus {
         box-shadow: none;
-        background: #2c84a7;
+        background: var(--customBlue);
         color: #fff;
     }
 }

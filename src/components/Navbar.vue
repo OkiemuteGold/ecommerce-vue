@@ -3,7 +3,7 @@
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#"
-                    ><span>E</span>-<span>Store</span></a
+                    ><span>Vue</span>-<span>Store</span></a
                 >
 
                 <button
@@ -83,7 +83,7 @@ export default {
 }
 
 .header-sticky {
-    background: #f1f1f1;
+    background: var(--customSectionBg);
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.075);
 }
 

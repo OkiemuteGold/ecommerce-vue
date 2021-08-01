@@ -89,7 +89,7 @@ export default {};
 
 <style lang="scss" scoped>
 .products {
-    background: #f1f1f1;
+    background: var(--customSectionBg);
 }
 
 .product-item {
@@ -120,9 +120,9 @@ export default {};
         padding: 2px 10px;
         border-radius: 5px 0 5px 0px;
         transform: rotate(30deg);
-        background: #f7d779;
+        background: #ffd34d;
         // box-shadow: -3px 4px 1px 1px rgba(0, 0, 0, 0.03);
-        border-bottom: 1px solid #f1f1f1;
+        // border-bottom: 1px solid var(--customSectionBg);
         box-shadow: -3px 4px 12px #d1c295;
         font-size: 13px;
 
@@ -136,7 +136,7 @@ export default {};
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: #2c84a7;
+            color: var(--customBlue);
 
             .card-title {
                 font-weight: 600;
@@ -148,14 +148,14 @@ export default {};
                 font-size: 14px;
                 font-style: italic;
                 font-weight: 900;
-                color: #737373;
+                color: var(--customParaText);
                 margin-bottom: 15px;
             }
         }
 
         .card-text {
             font-size: 14px;
-            color: #737373;
+            color: var(--customParaText);
             margin-bottom: 20px;
         }
     }

@@ -3,7 +3,7 @@
         <div class="container h-100">
             <div class="row h-100 justify-content-center align-items-center">
                 <div class="col-md-6 col-lg-5">
-                    <div class="hero-content">
+                    <div class="hero-content side-content-shadow">
                         <h1 class="hero-title">Welcome To Dummy Shop</h1>
                         <p>
                             Lorem ipsum dolor sit amet, consectetur adipisicing
@@ -47,8 +47,6 @@ export default {};
 .hero-content {
     padding-left: 2.2rem;
     padding-bottom: 1rem;
-    border-radius: 0 20px 20% 5%;
-    box-shadow: 0px 20px 0px #fafafa;
 
     & > .hero-title {
         text-transform: capitalize;

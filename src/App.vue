@@ -13,6 +13,15 @@ export default {};
 <style lang="scss">
 // @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;700&display=swap');
 
+:root {
+    --customBlue: #2c84a7;
+    --customBlueLight: #39aad6;
+    --customYellow: #ffc107;
+    --customSectionBg: #f1f1f1;
+    --customParaText: #737373;
+    --customText: #2c3e50;
+}
+
 *,
 body {
     margin: 0;
@@ -30,7 +39,11 @@ body,
     // font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    color: #2c3e50;
+    color: var(--customText);
+}
+
+p {
+    color: var(--customParaText);
 }
 
 #nav {
@@ -38,7 +51,7 @@ body,
 
     a {
         font-weight: bold;
-        color: #2c3e50;
+        color: var(--customText);
 
         &.router-link-exact-active {
             color: #42b983;
@@ -49,6 +62,11 @@ body,
 .btn:active,
 .btn:focus {
     box-shadow: none !important;
+}
+
+.side-content-shadow {
+    border-radius: 0 20px 20% 5%;
+    box-shadow: 0px 20px 0px #fafafa;
 }
 
 img {

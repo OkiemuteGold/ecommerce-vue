@@ -7,7 +7,7 @@
             <div class="sidebar-content">
                 <!-- sidebar-brand  -->
                 <div class="sidebar-item sidebar-brand">
-                    <router-link to="/admin/overview">E-SHOP</router-link>
+                    <router-link to="/admin/overview">VUE-STORE</router-link>
                     <div id="close-sidebar" @click="closeMenu">
                         <i class="fas fa-times"></i>
                     </div>
