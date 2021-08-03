@@ -3,6 +3,8 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
+import { fbase } from './firebase'
+
 import jQuery from 'jquery'
 window.$ = window.jQuery = jQuery;
 
@@ -15,8 +17,16 @@ import "./assets/app.scss";
 
 Vue.config.productionTip = false
 
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount('#app')
+let app = "";
+
+fbase.auth().onAuthStateChanged(function () {
+    if (!app) {
+        new Vue({
+            router,
+            store,
+            render: h => h(App)
+        }).$mount('#app')
+    }
+})
+
+

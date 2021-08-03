@@ -2,8 +2,8 @@
     <div class="container">
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#"
-                    ><span>Vue</span>-<span>Store</span></a
+                <router-link to="/" class="navbar-brand"
+                    ><span>Vue</span>-<span>Store</span></router-link
                 >
 
                 <button
