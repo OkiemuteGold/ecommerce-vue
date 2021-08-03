@@ -102,7 +102,7 @@
                             </router-link>
                         </li>
                         <li>
-                            <a>
+                            <a @click="logout">
                                 <i class="fa fa-power-off"></i>
                                 <span class="menu-text">Logout</span>
                             </a>
@@ -140,6 +140,8 @@
 <script>
 import $ from "jquery";
 
+import { fbase } from "../../firebase";
+
 export default {
     methods: {
         openMenu() {
@@ -148,6 +150,18 @@ export default {
 
         closeMenu() {
             $(".page-wrapper").toggleClass("toggled");
+        },
+
+        logout() {
+            fbase
+                .auth()
+                .signOut()
+                .then(() => {
+                    this.$router.replace("/");
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         },
     },
 

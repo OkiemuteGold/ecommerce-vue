@@ -9,6 +9,13 @@
         >
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content py-2">
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                    ></button>
+
                     <ul
                         class="
                             nav nav-tabs nav-pills nav-justified
@@ -48,13 +55,6 @@
                         </li>
                     </ul>
 
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                    ></button>
-
                     <div class="modal-body px-md-5 py-md-4">
                         <div class="tab-content" id="pills-tabContent">
                             <div
@@ -66,7 +66,7 @@
                                 <p>Please login</p>
 
                                 <form>
-                                    <div class="mb-3">
+                                    <div class="form-group mb-3">
                                         <label
                                             for="loginEmail"
                                             class="form-label"
@@ -77,10 +77,11 @@
                                             class="form-control"
                                             id="loginEmail"
                                             aria-describedby="emailHelp"
+                                            placeholder="Enter your email"
                                         />
                                     </div>
 
-                                    <div class="mb-3">
+                                    <div class="form-group mb-3">
                                         <label
                                             for="loginPassword"
                                             class="form-label"
@@ -91,6 +92,7 @@
                                             class="form-control"
                                             id="loginPassword"
                                             aria-describedby="passwordHelp"
+                                            placeholder="Enter your password"
                                         />
                                         <div
                                             id="passwordHelp"
@@ -125,10 +127,10 @@
                                 role="tabpanel"
                                 aria-labelledby="pills-profile-tab"
                             >
-                                <p>Create an account</p>
+                                <p>Create a new account</p>
 
                                 <form>
-                                    <div class="mb-3">
+                                    <div class="form-group mb-3">
                                         <label
                                             for="nameInput"
                                             class="form-label"
@@ -138,10 +140,12 @@
                                             type="text"
                                             class="form-control"
                                             id="nameInput"
+                                            placeholder="Enter your full name"
+                                            v-model="form.fullname"
                                         />
                                     </div>
 
-                                    <div class="mb-3">
+                                    <div class="form-group mb-3">
                                         <label
                                             for="signupEmail"
                                             class="form-label"
@@ -152,6 +156,8 @@
                                             class="form-control"
                                             id="signupEmail"
                                             aria-describedby="emailHelp"
+                                            placeholder="Enter your email"
+                                            v-model="form.email"
                                         />
                                         <div id="emailHelp" class="form-text">
                                             We'll never share your email with
@@ -159,7 +165,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="mb-3">
+                                    <div class="form-group mb-3">
                                         <label
                                             for="signupPassword"
                                             class="form-label"
@@ -170,6 +176,8 @@
                                             class="form-control"
                                             id="signupPassword"
                                             aria-describedby="passwordHelp"
+                                            placeholder="Enter your password"
+                                            v-model="form.password"
                                         />
                                         <div
                                             id="passwordHelp"
@@ -194,8 +202,15 @@
                                             conditions</label
                                         >
                                     </div>
-                                    <button type="submit" class="btn">
+                                    <button
+                                        type="submit"
+                                        class="btn"
+                                        @click.prevent="registerUser"
+                                    >
                                         Signup
+                                        <!-- <span
+                                            class="spinner spinner-border"
+                                        ></span> -->
                                     </button>
                                 </form>
                             </div>
@@ -208,7 +223,62 @@
 </template>
 
 <script>
-export default {};
+import $ from "jquery";
+
+import { fbase } from "../firebase";
+
+export default {
+    data() {
+        return {
+            form: {
+                fullname: null,
+                email: null,
+                password: null,
+            },
+        };
+    },
+
+    // computed: {
+    //     isInvalid() {
+    //         return (
+    //             this.form.fullname == null ||
+    //             this.form.email == null ||
+    //             this.form.password == null
+    //         );
+    //     },
+    // },
+
+    methods: {
+        registerUser() {
+            fbase
+                .auth()
+                .createUserWithEmailAndPassword(
+                    this.form.email,
+                    this.form.password
+                )
+                .then(() => {
+                    $("#loginModal").modal("hide");
+                    this.$router.replace("admin");
+                })
+                .catch((error) => {
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    if (errorCode == "auth/weak-password") {
+                        alert("The password is too weak.");
+                    } else {
+                        alert(errorMessage);
+                    }
+                    console.log(error);
+                });
+
+            this.form = {
+                fullname: null,
+                email: null,
+                password: null,
+            };
+        },
+    },
+};
 </script>
 
 <style scoped lang="scss">
@@ -226,6 +296,12 @@ export default {};
     background: var(--customBlue);
 }
 
+.tab-content p {
+    text-align: center;
+    text-transform: capitalize;
+    margin-bottom: 1.25rem;
+}
+
 .modal-content {
     background: rgba(0, 0, 0, 0.75);
     color: #fff;
@@ -237,18 +313,24 @@ export default {};
         text-shadow: 0.5px 0.5px 1px var(--customParaText);
         letter-spacing: 1px;
     }
+}
+
+form {
+    label {
+        font-size: 15px;
+    }
+
+    input,
+    input::placeholder {
+        font-size: 13px;
+    }
 
     .form-text {
         color: var(--customParaText);
         font-style: italic;
+        font-size: 12px;
         margin-top: 10px;
     }
-}
-
-.tab-content p {
-    text-align: center;
-    text-transform: capitalize;
-    margin-bottom: 1.25rem;
 }
 
 .form-check-input:checked {
@@ -257,6 +339,7 @@ export default {};
 }
 
 form button {
+    margin-top: 10px;
     background: transparent;
     color: var(--customBlueLight);
     border-color: var(--customBlue);
@@ -269,6 +352,16 @@ form button {
         background: var(--customBlue);
         color: #fff;
     }
+
+    &.disabled {
+        opacity: 0.5;
+    }
+}
+
+.spinner {
+    width: 15px;
+    height: 15px;
+    margin-left: 8px;
 }
 
 .btn-close {
