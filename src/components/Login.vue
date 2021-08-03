@@ -63,7 +63,7 @@
                                 role="tabpanel"
                                 aria-labelledby="pills-home-tab"
                             >
-                                <p>Please login to your account</p>
+                                <p>Please login</p>
 
                                 <form>
                                     <div class="mb-3">
@@ -218,7 +218,7 @@ export default {};
 
     &:not(.nav-link.active):hover {
         color: var(--customBlueLight);
-        background: rgba(0, 0, 0, 0.1);
+        background: rgba(0, 0, 0, 0.125);
     }
 }
 
@@ -227,16 +227,15 @@ export default {};
 }
 
 .modal-content {
-    background: rgba(0, 0, 0, 0.7);
-    color: var(--customSectionBg);
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
     border-top-right-radius: 0;
-    font-weight: 300;
 
     p {
-        color: var(--customSectionBg);
-        font-size: 16px;
-        text-shadow: 1px 0.5px 1px #f1f1f1;
-        letter-spacing: 1.5px;
+        color: #fff;
+        font-size: 18px;
+        text-shadow: 0.5px 0.5px 1px var(--customParaText);
+        letter-spacing: 1px;
     }
 
     .form-text {
@@ -248,13 +247,13 @@ export default {};
 
 .tab-content p {
     text-align: center;
-    margin-bottom: 1.25rem;
     text-transform: capitalize;
+    margin-bottom: 1.25rem;
 }
 
 .form-check-input:checked {
-    background-color: var(--customYellow);
-    border-color: var(--customYellow);
+    background-color: var(--customBlue);
+    border-color: var(--customBlue);
 }
 
 form button {
