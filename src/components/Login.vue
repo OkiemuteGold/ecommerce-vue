@@ -78,6 +78,7 @@
                                             id="loginEmail"
                                             aria-describedby="emailHelp"
                                             placeholder="Enter your email"
+                                            v-model="form.email"
                                         />
                                     </div>
 
@@ -93,6 +94,7 @@
                                             id="loginPassword"
                                             aria-describedby="passwordHelp"
                                             placeholder="Enter your password"
+                                            v-model="form.password"
                                         />
                                         <div
                                             id="passwordHelp"
@@ -116,7 +118,11 @@
                                             >Remember me</label
                                         >
                                     </div>
-                                    <button type="submit" class="btn">
+                                    <button
+                                        type="submit"
+                                        class="btn"
+                                        @click.prevent="login"
+                                    >
                                         Login
                                     </button>
                                 </form>
@@ -249,6 +255,26 @@ export default {
     // },
 
     methods: {
+        login() {
+            fbase
+                .auth()
+                .signInWithEmailAndPassword(this.form.email, this.form.password)
+                .then(() => {
+                    $("#loginModal").modal("hide");
+                    this.$router.replace("/admin");
+                })
+                .catch(function (error) {
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    if (errorCode === "auth/wrong-password") {
+                        alert("Wrong password.");
+                    } else {
+                        alert(errorMessage);
+                    }
+                    console.log(error);
+                });
+        },
+
         registerUser() {
             fbase
                 .auth()
