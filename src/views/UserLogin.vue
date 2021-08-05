@@ -318,7 +318,7 @@ main {
 
 .tab-content {
     text-transform: capitalize;
-    margin-top: 2rem;
+    margin-top: 1.75rem;
 }
 
 form {
