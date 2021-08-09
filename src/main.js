@@ -15,6 +15,10 @@ import "bootstrap";
 
 import "./assets/app.scss";
 
+import ScrollAnimation from "./directives/scroll_animation"
+
+Vue.directive("scroll_animation", ScrollAnimation);
+
 Vue.config.productionTip = false
 
 let app = "";

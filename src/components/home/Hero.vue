@@ -3,7 +3,10 @@
         <div class="container h-100">
             <div class="row h-100 justify-content-center align-items-center">
                 <div class="col-md-6 col-lg-5">
-                    <div class="hero-content side-content-shadow">
+                    <div
+                        class="hero-content side-content-shadow"
+                        v-scroll_animation
+                    >
                         <h1 class="hero-title">Welcome To Dummy Shop</h1>
                         <p>
                             Lorem ipsum dolor sit amet, consectetur adipisicing
@@ -20,7 +23,7 @@
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-7">
-                    <div class="image">
+                    <div class="image" v-scroll_animation>
                         <img
                             src="img/svg/graphic.svg"
                             alt="hero image"
@@ -52,6 +55,17 @@ export default {};
         text-transform: capitalize;
         margin-bottom: 10px;
     }
+
+    // animation
+    &.before_enter {
+        opacity: 0;
+        transform: translateX(-100px);
+        transition: all 1.5s ease-out;
+    }
+    &.enter {
+        opacity: 1;
+        transform: translateY(0px);
+    }
 }
 
 .hero-buttons {
@@ -68,6 +82,19 @@ export default {};
     &:active,
     &:focus {
         box-shadow: none;
+    }
+}
+
+.image {
+    // animation
+    &.before_enter {
+        opacity: 0;
+        transform: translateX(100px);
+        transition: all 1.5s ease-out;
+    }
+    &.enter {
+        opacity: 1;
+        transform: translateY(0px);
     }
 }
 

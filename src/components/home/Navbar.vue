@@ -44,9 +44,10 @@
                             form-inline
                             d-flex
                             flex-column flex-lg-row
-                            align-items-start
+                            align-items-start align-items-lg-center
                         "
                     >
+                        <span>&#128269;</span>
                         <input
                             class="form-control me-2"
                             type="search"
@@ -91,7 +92,7 @@ export default {
     position: relative;
 
     &:hover > .nav-link:after {
-        display: block;
+        width: 60%;
     }
 }
 
@@ -102,11 +103,11 @@ export default {
     right: 0;
     margin: auto;
     bottom: 0;
-    width: 60%;
+    width: 0%;
     height: 3.2px;
-    border-radius: 50px 50px 0 0;
+    // border-radius: 50px 0 50px 0;
+    border-radius: 0 0 50px 50px;
     background: rgba(0, 0, 0, 0.55);
-    display: none;
     transition: 0.5s ease;
 }
 
@@ -120,9 +121,76 @@ export default {
     }
 }
 
-input:hover,
-input:focus {
-    box-shadow: none;
-    border-color: #198754;
+form span {
+    position: absolute;
+    padding: 10px 10px 10px 8px;
+    font-size: 13px;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+input {
+    min-width: 250px;
+    padding-left: 32px;
+    font-size: 15px;
+
+    &:hover,
+    &:focus {
+        box-shadow: none;
+        border-color: #198754;
+    }
+}
+
+@media screen and (max-width: 993px) {
+    .navbar-light .navbar-toggler {
+        height: 40px;
+        width: 40px;
+        border-radius: 50%;
+        transition: 0.4s ease-in;
+
+        &:focus {
+            border-color: transparent;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.175);
+        }
+    }
+    .navbar-toggler-icon {
+        margin-left: -8px;
+    }
+
+    .navbar-collapse {
+        background: #eaeaea;
+        padding: 25px 25px 35px;
+        margin: 10px;
+        border-radius: 5px;
+    }
+
+    .nav-item {
+        padding-left: 5px;
+
+        &:hover > .nav-link:after {
+            height: 60% !important;
+        }
+    }
+
+    .nav-link:after {
+        left: -100%;
+        top: 0;
+        width: 3.2px !important;
+        height: 0% !important;
+        border-radius: 50px 0 0 50px;
+    }
+}
+
+@media screen and (max-width: 376px) {
+    .navbar-collapse {
+        padding: 20px 15px 30px;
+        margin: 10px 0;
+    }
+
+    input {
+        min-width: 200px;
+    }
 }
 </style>

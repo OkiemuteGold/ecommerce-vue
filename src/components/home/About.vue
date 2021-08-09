@@ -3,7 +3,7 @@
         <div class="container">
             <div class="row justify-content-center align-items-center">
                 <div class="col-md-6">
-                    <div class="image">
+                    <div class="image" v-scroll_animation>
                         <img
                             src="img/svg/product.svg"
                             alt="about image"
@@ -13,7 +13,10 @@
                 </div>
 
                 <div class="col-md-6">
-                    <div class="right-content side-content-shadow">
+                    <div
+                        class="right-content side-content-shadow"
+                        v-scroll_animation
+                    >
                         <h2 class="title">Learn More About Us</h2>
                         <p>
                             Lorem ipsum dolor sit amet, consectetur adipisicing
@@ -47,6 +50,18 @@ export default {};
         text-transform: capitalize;
         margin-bottom: 10px;
     }
+
+    // animation
+    &.before_enter {
+        opacity: 0;
+        transform: translateY(-50px);
+        transition: all 1.5s ease-out;
+        transition-delay: 1.65s;
+    }
+    &.enter {
+        opacity: 1;
+        transform: translateY(0px);
+    }
 }
 
 .about-button {
@@ -68,6 +83,16 @@ export default {};
 
 .image {
     padding: 30px;
+
+    // animation
+    &.before_enter {
+        opacity: 0;
+        transition: all 2s ease-out;
+        transition-delay: 1.25s;
+    }
+    &.enter {
+        opacity: 1;
+    }
 }
 
 @media screen and (max-width: 426px) {
