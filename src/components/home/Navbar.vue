@@ -47,11 +47,11 @@
                             align-items-start align-items-lg-center
                         "
                     >
-                        <span>&#128269;</span>
+                        <!-- <span>&#128269;</span> -->
                         <input
                             class="form-control me-2"
                             type="search"
-                            placeholder="Search"
+                            placeholder="Search products..."
                             aria-label="Search"
                         />
                         <a
@@ -133,7 +133,7 @@ form span {
 
 input {
     min-width: 250px;
-    padding-left: 32px;
+    // padding-left: 1rem;
     font-size: 15px;
 
     &:hover,

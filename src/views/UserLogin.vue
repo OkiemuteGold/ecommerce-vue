@@ -186,7 +186,7 @@
 
 <script>
 import $ from "jquery";
-
+import "@/mixins";
 import { fbase } from "../firebase";
 
 export default {
@@ -230,6 +230,8 @@ export default {
                 )
                 .then(() => {
                     $("#loginModal").modal("hide");
+                    // clear field only when its successful
+                    this.resetFormData();
                     this.$router.replace("admin");
                 })
                 .catch((error) => {
@@ -243,11 +245,11 @@ export default {
                     console.log(error);
                 });
 
-            this.form = {
-                fullname: null,
-                email: null,
-                password: null,
-            };
+            // this.form = {
+            //     fullname: null,
+            //     email: null,
+            //     password: null,
+            // };
         },
     },
 };

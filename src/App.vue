@@ -89,6 +89,11 @@ img {
     padding-bottom: 70px;
 }
 
+.section-padd-40 {
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
 .no-top {
     padding-top: 0;
 }

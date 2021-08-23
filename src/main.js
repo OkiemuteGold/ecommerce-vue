@@ -21,11 +21,11 @@ Vue.directive("scroll_animation", ScrollAnimation);
 
 Vue.config.productionTip = false
 
-let app = "";
+let app;
 
 fbase.auth().onAuthStateChanged(function () {
     if (!app) {
-        new Vue({
+        app = new Vue({
             router,
             store,
             render: h => h(App)
