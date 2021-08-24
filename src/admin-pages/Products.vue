@@ -59,20 +59,40 @@
                 </form>
 
                 <h3>Product list</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(product, index) in products" :key="index">
-                            <td>{{ product.name }}</td>
-                            <td>{{ product.price }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Modify</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr
+                                v-for="(product, index) in products"
+                                :key="index"
+                            >
+                                <td>{{ product.data().name }}</td>
+                                <td>{{ product.data().price }}</td>
+                                <td>
+                                    <button
+                                        class="btn btn-primary"
+                                        @click="editProduct(product)"
+                                    >
+                                        Edit
+                                    </button>
+                                    <button
+                                        class="btn btn-danger"
+                                        @click="deleteProduct(product.id)"
+                                    >
+                                        X
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </section>
         </div>
     </div>
@@ -98,6 +118,18 @@ export default {
         },
     },
     methods: {
+        // updated() {
+        //     db.collection("products").onSnapshot((querySnapshot) => {
+        //         var updatedProducts = [];
+        //         querySnapshot.forEach((doc) => {
+        //             updatedProducts.push(doc.data().name);
+        //         });
+        //         console.log(
+        //             "Current products are: ",
+        //             updatedProducts.join(", ")
+        //         );
+        //     });
+        // },
         saveData() {
             db.collection("products")
                 .add(this.product)
@@ -123,14 +155,30 @@ export default {
                         // doc.data() is never undefined for query doc snapshots
                         // console.log(doc.id, " => ", doc.data());
 
-                        this.products.push(doc.data());
+                        this.products.push(doc);
                     });
                 });
+        },
+        deleteProduct(productId) {
+            if (confirm("Are you sure ?")) {
+                db.collection("products")
+                    .doc(productId)
+                    .delete()
+                    .then(() => {
+                        console.log("Product deleted successfully!");
+                    })
+                    .catch((error) => {
+                        console.log("Error removing document: ", error);
+                    });
+            }
         },
     },
     created() {
         this.readData();
     },
+    // mounted() {
+    //     this.updated();
+    // },
 };
 </script>
 
