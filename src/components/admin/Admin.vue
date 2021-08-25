@@ -130,7 +130,7 @@
 
         <!-- page-content  -->
         <main class="page-content">
-            <div class="px-4">
+            <div class="px-2 px-md-4">
                 <router-view />
             </div>
         </main>
