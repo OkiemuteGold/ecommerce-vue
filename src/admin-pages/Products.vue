@@ -1,5 +1,5 @@
 <template>
-    <div class="overview-container">
+    <div class="product overview-container pb-5">
         <div class="container">
             <section class="intro px-md-4 section-padd-40">
                 <div
@@ -28,15 +28,15 @@
 
             <!-- Save product form -->
             <section class="product-test px-md-4 section-padd-40">
-                <h3>Basic CRUD in Firebase and Vue.</h3>
-                <form class="add-product-form">
+                <!-- <h3>Basic CRUD in Firebase and Vue.</h3>
+                <form class="add-product-form" @submit.prevent="addProduct">
                     <div class="form-group">
                         <input
                             type="text"
                             placeholder="Product Name"
                             class="form-control"
-                            required
                             v-model="product.name"
+                            @input="checkForm"
                         />
                     </div>
                     <div class="form-group">
@@ -44,22 +44,28 @@
                             type="text"
                             placeholder="Price"
                             class="form-control"
-                            required
                             v-model="product.price"
+                            @input="checkForm"
                         />
                     </div>
                     <div class="form-group">
                         <button
                             class="btn btn-primary"
+                            type="submit"
                             :disabled="isInValid"
-                            @click.prevent="addProduct"
                         >
                             Add Product
                         </button>
                     </div>
-                </form>
+                </form> -->
 
-                <h3>Product list</h3>
+                <h3 class="float-left">Product list</h3>
+                <button
+                    class="btn btn-primary float-right"
+                    @click="openAddProductModal"
+                >
+                    Add Product
+                </button>
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
@@ -67,9 +73,13 @@
                                 <th>#</th>
                                 <th>Name</th>
                                 <th>Price</th>
+                                <th>Tag</th>
+                                <th>Description</th>
+                                <!-- <th>Image</th> -->
                                 <th>Modify</th>
                             </tr>
                         </thead>
+
                         <tbody>
                             <tr
                                 v-for="(product, index) in products"
@@ -77,30 +87,27 @@
                             >
                                 <th>{{ (index += 1) }}</th>
                                 <td>
-                                    {{ product.data().name }}
+                                    {{ product.name }}
                                 </td>
                                 <td>
-                                    {{ product.data().price }}
+                                    {{ product.price }}
                                 </td>
                                 <td>
-                                    <!-- <button
-                                        class="btn btn-primary"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#editModal"
-                                    > -->
-
-                                    <button
-                                        class="btn btn-primary mr-1"
+                                    {{ product.tag }}
+                                </td>
+                                <td class="description">
+                                    <span v-html="product.description"></span>
+                                </td>
+                                <td>
+                                    <i
+                                        class="fas fa-edit text-primary"
                                         @click="editProduct(product)"
-                                    >
-                                        Edit
-                                    </button>
-                                    <button
-                                        class="btn btn-danger"
+                                    ></i>
+
+                                    <i
+                                        class="fas fa-trash-alt text-danger"
                                         @click="deleteProduct(product.id)"
-                                    >
-                                        X
-                                    </button>
+                                    ></i>
                                 </td>
                             </tr>
                         </tbody>
@@ -109,19 +116,19 @@
             </section>
         </div>
 
-        <!-- Edit product modal -->
+        <!-- add product modal -->
         <div
             class="modal fade"
-            id="editModal"
+            id="addProductModal"
             tabindex="-1"
-            aria-labelledby="editModalLabel"
+            aria-labelledby="addProductModalLabel"
             aria-hidden="true"
         >
-            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editModalLabel">
-                            Edit Product
+                        <h5 class="modal-title" id="addProductModalLabel">
+                            Add New Product
                         </h5>
                         <button
                             type="button"
@@ -130,179 +137,210 @@
                             aria-label="Close"
                         ></button>
                     </div>
-                    <div class="modal-body pt-md-4 pb-md-2">
-                        <form>
-                            <div class="form-group">
-                                <input
-                                    type="text"
-                                    placeholder="Product Name"
-                                    class="form-control"
-                                    required
-                                    v-model="product.name"
-                                />
+
+                    <div class="modal-body">
+                        <div class="row">
+                            <!-- main product -->
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        placeholder="Product Name"
+                                        v-model="product.name"
+                                        @input="checkForm"
+                                    />
+                                </div>
+
+                                <div class="form-group">
+                                    <vue-editor
+                                        :editorToolbar="customToolbar"
+                                        placeholder="Enter product description"
+                                        v-model="product.description"
+                                        @input="checkForm"
+                                    ></vue-editor>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <input
-                                    type="text"
-                                    placeholder="Price"
-                                    class="form-control"
-                                    required
-                                    v-model="product.price"
-                                />
+                            <!-- side details -->
+                            <div class="col-md-4">
+                                <h5>Product Details</h5>
+                                <hr />
+
+                                <div class="form-group">
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        placeholder="Product price"
+                                        v-model="product.price"
+                                        @input="checkForm"
+                                    />
+                                </div>
+
+                                <div class="form-group">
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        placeholder="Product tags"
+                                        v-model="product.tag"
+                                        @keyup.188="addTag"
+                                        @input="checkForm"
+                                    />
+
+                                    <div class="d-flex">
+                                        <p
+                                            v-for="(tag, index) in product.tags"
+                                            :key="index"
+                                        >
+                                            <span class="p-1">{{ tag }}</span>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="product_image"
+                                        >Product Images</label
+                                    >
+                                    <input
+                                        type="file"
+                                        class="form-control"
+                                        @change="uploadImage"
+                                    />
+                                </div>
+
+                                <div class="form-group d-flex">
+                                    <div
+                                        class="p-1"
+                                        v-for="(image, index) in product.images"
+                                        :key="index"
+                                    >
+                                        <div class="img-wrapp">
+                                            <img
+                                                :src="image"
+                                                alt=""
+                                                width="80px"
+                                            />
+                                            <span
+                                                class="delete-img"
+                                                @click="
+                                                    deleteImage(image, index)
+                                                "
+                                                >X</span
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
+
                     <div class="modal-footer">
-                        <button
+                        <!-- <button
                             type="button"
                             class="btn btn-secondary"
-                            data-bs-dismiss="modal"
-                            @click.prevent="resetChanges()"
+                            @click="resetPrice || resetName"
                         >
                             Reset
-                        </button>
+                        </button> -->
                         <button
                             type="button"
                             class="btn btn-primary"
-                            @click="updateProduct()"
+                            @click="addProduct"
+                            :disabled="isInValid"
                         >
-                            Save changes
+                            Add Product
                         </button>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- <preLoader v-if="loading" /> -->
     </div>
 </template>
 
 <script>
+import { VueEditor } from "vue2-editor";
 import $ from "jquery";
-// import "@/mixins";
+import "@/mixins";
 
 import { db } from "../firebase";
+// import preLoader from "../components/extra/preLoader.vue";
 
 export default {
+    components: {
+        VueEditor,
+        // preLoader
+    },
+
     data() {
         return {
             products: [],
             product: {
                 name: null,
+                description: null,
                 price: null,
+                tag: null,
+                image: null,
             },
-            activeProduct: null,
+            isInValid: true,
+
+            customToolbar: [],
+            // loading: false,
         };
     },
-    computed: {
-        isInValid() {
-            return this.product.name == null || this.product.price == null;
-        },
+
+    firestore() {
+        return {
+            products: db.collection("products"),
+        };
     },
+
+    // filters: {
+    //     strippedContent: function (string) {
+    //         return string.replace(/<\/?[^>]+>/gi, " ");
+    //     },
+    // },
+
     methods: {
-        productUpdateWatcher() {
-            db.collection("products").onSnapshot((querySnapshot) => {
-                let updatedProducts = (this.products = []);
-                querySnapshot.forEach((doc) => {
-                    updatedProducts.push(doc);
-                });
-                console.log(
-                    "Current products are: ",
-                    updatedProducts.join(", ")
-                );
-            });
+        checkForm: function () {
+            const checkParams =
+                !this.product.name ||
+                !this.product.description ||
+                !this.product.price ||
+                !this.product.tag;
+
+            if (checkParams) {
+                this.isInValid = true;
+                return;
+            }
+            this.isInValid = false;
+        },
+
+        openAddProductModal() {
+            $("#addProductModal").modal("show");
         },
 
         addProduct() {
-            db.collection("products")
-                .add(this.product)
-                .then((docRef) => {
-                    console.log("Document written with ID: ", docRef.id);
-
-                    // this.resetFormData();
-                })
-                .catch((error) => {
-                    console.error("Error adding document: ", error);
-                });
-
-            // this.product = {
-            //     name: null,
-            //     price: null,
-            // };
+            this.$firestore.products.add(this.product);
+            this.resetFormData();
         },
 
-        readProduct() {
-            db.collection("products")
-                .get()
-                .then((querySnapshot) => {
-                    querySnapshot.forEach((doc) => {
-                        // doc.data() is never undefined for query doc snapshots
-                        // console.log(doc.id, " => ", doc.data());
+        uploadImage() {},
 
-                        this.products.push(doc);
-                    });
-                });
-        },
+        deleteImage() {},
 
-        deleteProduct(productId) {
-            if (confirm("Are you sure ?")) {
-                db.collection("products")
-                    .doc(productId)
-                    .delete()
-                    .then(() => {
-                        console.log("Product deleted successfully!");
-                    })
-                    .catch((error) => {
-                        console.log("Error removing document: ", error);
-                    });
-            }
-        },
+        addTag() {},
 
-        editProduct(product) {
-            $("#editModal").modal("show");
-            this.product = product.data();
-            this.activeProduct = product.id;
-        },
+        readProduct() {},
 
-        // async updateProduct() {
-        //     let updatedProduct = db
-        //         .collection("products")
-        //         .doc(this.activeProduct);
-        //     try {
-        //         await updatedProduct.update(this.product);
-        //         console.log("Document successfully updated!");
+        deleteProduct() {},
 
-        //         $("#editModal").modal("hide");
-        //     } catch (error) {
-        //         console.log("Error updating document: ", error);
-        //     }
-        // },
+        editProduct() {},
 
-        updateProduct() {
-            var updatedProduct = db
-                .collection("products")
-                .doc(this.activeProduct);
-
-            return updatedProduct
-                .update(this.product)
-                .then(() => {
-                    $("#editModal").modal("hide");
-                    console.log("Document successfully updated!");
-                })
-                .catch((error) => {
-                    console.error("Error updating document: ", error);
-                });
-        },
-
-        // resetChanges() {
-        //     let currentProductId = this.activeProduct;
-        //     console.log(currentProductId);
-        // },
+        updateProduct() {},
     },
-    created() {
-        this.readProduct();
-    },
-    mounted() {
-        this.productUpdateWatcher();
-    },
+
+    mounted() {},
 };
 </script>
 
@@ -311,10 +349,10 @@ h3 {
     margin-bottom: 20px;
 }
 
-.add-product-form {
-    max-width: 600px;
-    margin-bottom: 40px;
-}
+// .add-product-form {
+//     max-width: 600px;
+//     margin-bottom: 40px;
+// }
 
 tbody tr th,
 tbody tr td {
@@ -329,6 +367,23 @@ thead th {
 
 tbody tr:hover {
     background-color: var(--customSectionBg);
+}
+
+tbody tr td i {
+    font-size: 1.05rem;
+    margin-left: 0.4rem;
+    margin-right: 0.4rem;
+    transition: 0.3s ease-in;
+}
+
+tbody tr td i:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+}
+
+input::placeholder {
+    font-size: 14px;
+    font-style: italic;
 }
 
 @media screen and (max-width: 426px) {

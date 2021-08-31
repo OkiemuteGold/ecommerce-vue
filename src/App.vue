@@ -42,8 +42,23 @@ body,
     color: var(--customText);
 }
 
+.product .quillWrapper .ql-snow.ql-toolbar {
+    display: none;
+}
+.product .ql-container.ql-snow {
+    border: 1px solid #ccc !important;
+}
+.ql-editor {
+    font-size: 14px !important;
+}
+
 p {
     color: var(--customParaText);
+}
+
+tbody tr td.description p {
+    margin-bottom: 0;
+    color: var(--customText);
 }
 
 #nav {

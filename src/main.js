@@ -3,26 +3,31 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
-import { fbase } from './firebase'
-
 import jQuery from 'jquery'
+import { fbase } from './firebase'
+import VueFirestore from 'vue-firestore'
+
 window.$ = window.jQuery = jQuery;
 
 import "popper.js";
 import "bootstrap";
-// import 'bootstrap/dist/css/bootstrap.css'
-// import '../node_modules/bootstrap/dist/css/bootstrap.css';
-
 import "./assets/app.scss";
 
 import ScrollAnimation from "./directives/scroll_animation"
-
 Vue.directive("scroll_animation", ScrollAnimation);
+
+// Vue.filter("stripHTML", function (value) {
+//     const div = document.createElement("div")
+//     div.innerHTML = value
+//     const text = div.textContent || div.innerText || ""
+//     return text
+// });
+
+Vue.use(VueFirestore);
 
 Vue.config.productionTip = false
 
 let app;
-
 fbase.auth().onAuthStateChanged(function () {
     if (!app) {
         app = new Vue({
