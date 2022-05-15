@@ -8,14 +8,17 @@ require("firebase/firestore");
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+
+import config from "../config.txt";
+
 var firebaseConfig = {
-    apiKey: "AIzaSyClHZeL9aR_SX0auv9nXB3S8z5hXk-ztMI",
-    authDomain: "vue-store-560fc.firebaseapp.com",
-    projectId: "vue-store-560fc",
-    storageBucket: "vue-store-560fc.appspot.com",
-    messagingSenderId: "1026668032357",
-    appId: "1:1026668032357:web:dd20bcb182182e245bb18c",
-    measurementId: "G-QHNXFGWF3Y"
+    apiKey: config[0].key,
+    authDomain: config[0].authDomain,
+    projectId: config[0].projectId,
+    storageBucket: config[0].storageBucket,
+    messagingSenderId: config[0].messagingSenderId,
+    appId: config[0].appId,
+    measurementId: config[0].measurementId
 };
 
 // Initialize Firebase
