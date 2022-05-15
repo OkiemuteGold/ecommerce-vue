@@ -1,5 +1,5 @@
 <template>
-    <div class="login">
+    <div class="login main-form">
         <div
             class="modal fade"
             id="loginModal"
@@ -8,7 +8,7 @@
             aria-hidden="true"
         >
             <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content py-2">
+                <div class="modal-content pt-4 pb-3">
                     <button
                         type="button"
                         class="btn-close"
@@ -19,8 +19,9 @@
                     <ul
                         class="
                             nav nav-tabs nav-pills nav-justified
+                            p-2
                             px-md-5
-                            py-md-4
+                            py-md-3
                         "
                         id="pills-tab"
                         role="tablist"
@@ -37,9 +38,10 @@
                                 aria-selected="true"
                             >
                                 <span v-if="!isForgotPassword">Login</span>
-                                <span v-else>Forgot Password</span>
+                                <span v-else>Forgot</span>
                             </button>
                         </li>
+
                         <li class="nav-item" role="presentation">
                             <button
                                 class="nav-link"
@@ -120,10 +122,14 @@
                                             >Keep me signed in</label
                                         >
                                     </div>
+
                                     <button
                                         type="submit"
                                         class="btn"
-                                        @click.prevent="login"
+                                        :disabled="!isValid"
+                                        @click.prevent="
+                                            login(form.email, form.password)
+                                        "
                                     >
                                         Login
                                     </button>
@@ -160,16 +166,21 @@
                                         <div
                                             id="passwordHelp"
                                             class="form-text"
+                                            v-if="!form.email"
                                         >
-                                            Sorry, {{ form.email }} has not been
-                                            registered.
+                                            <!-- Sorry, {{ form.email }} has not been registered. -->
+                                            Please input the email you used to
+                                            signup
                                         </div>
                                     </div>
 
                                     <button
                                         type="submit"
                                         class="btn"
-                                        @click.prevent="recoverPassword"
+                                        :disabled="!form.email"
+                                        @click.prevent="
+                                            recoverPassword(form.email)
+                                        "
                                     >
                                         Recover Password
                                     </button>
@@ -189,6 +200,7 @@
                                     </button>
                                 </form>
                             </div>
+
                             <div
                                 class="tab-pane fade"
                                 id="pills-profile"
@@ -209,7 +221,7 @@
                                             class="form-control"
                                             id="nameInput"
                                             placeholder="Enter your full name"
-                                            v-model="form.fullname"
+                                            v-model="form.fullName"
                                         />
                                     </div>
 
@@ -262,6 +274,7 @@
                                             type="checkbox"
                                             class="form-check-input"
                                             id="agreeCheck"
+                                            v-model="hasAgreedToTerms"
                                         />
                                         <label
                                             class="form-check-label"
@@ -270,10 +283,21 @@
                                             conditions</label
                                         >
                                     </div>
+
                                     <button
                                         type="submit"
                                         class="btn"
-                                        @click.prevent="registerUser"
+                                        :disabled="
+                                            !isValid ||
+                                            !form.fullName ||
+                                            !hasAgreedToTerms
+                                        "
+                                        @click.prevent="
+                                            registerUser(
+                                                form.email,
+                                                form.password
+                                            )
+                                        "
                                     >
                                         Signup
                                         <!-- <span
@@ -291,123 +315,30 @@
 </template>
 
 <script>
-import $ from "jquery";
 import "@/mixins";
-import { fbase } from "../firebase";
 
 export default {
     data() {
         return {
             form: {
-                fullname: null,
-                email: null,
-                password: null,
+                fullName: "",
+                email: "",
+                password: "",
             },
 
             isForgotPassword: false,
+            hasAgreedToTerms: false,
         };
-    },
-
-    // computed: {
-    //     isInvalid() {
-    //         return (
-    //             this.form.fullname == null ||
-    //             this.form.email == null ||
-    //             this.form.password == null
-    //         );
-    //     },
-    // },
-
-    methods: {
-        login() {
-            fbase
-                .auth()
-                .signInWithEmailAndPassword(this.form.email, this.form.password)
-                .then(() => {
-                    $("#loginModal").modal("hide");
-                    this.$router.replace("/admin");
-                })
-                .catch(function (error) {
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
-                    if (errorCode === "auth/wrong-password") {
-                        alert("Wrong password.");
-                    } else {
-                        alert(errorMessage);
-                    }
-                    console.log(error);
-                });
-        },
-
-        registerUser() {
-            fbase
-                .auth()
-                .createUserWithEmailAndPassword(
-                    this.form.email,
-                    this.form.password
-                )
-                .then(() => {
-                    $("#loginModal").modal("hide");
-                    // clear field only when its successful
-                    this.resetFormData();
-                    this.$router.replace("admin");
-                })
-                .catch((error) => {
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
-                    if (errorCode == "auth/weak-password") {
-                        alert("The password is too weak.");
-                    } else {
-                        alert(errorMessage);
-                    }
-                    console.log(error);
-                });
-
-            // this.form = {
-            //     fullname: null,
-            //     email: null,
-            //     password: null,
-            // };
-        },
-
-        recoverPassword() {
-            fbase
-                .auth()
-                .sendPasswordResetEmail(this.form.email)
-                .then(() => {
-                    alert("Password reset email sent!");
-                    console.log(this.form.email);
-                })
-                .catch((error) => {
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
-
-                    console.log(errorCode, errorMessage);
-                });
-        },
     },
 };
 </script>
 
 <style scoped lang="scss">
-.nav-pills .nav-link {
-    text-transform: uppercase;
-    color: var(--customBlue);
-
-    &:not(.nav-link.active):hover {
-        color: var(--customBlueLight);
-        background: rgba(0, 0, 0, 0.125);
-    }
-}
-
-.nav-pills .nav-link.active {
-    background: var(--customBlue);
-}
-
 .tab-content p {
     text-align: center;
     text-transform: capitalize;
-    margin-bottom: 1.25rem;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .modal-content {
@@ -421,57 +352,12 @@ export default {
         text-shadow: 0.5px 0.5px 1px var(--customParaText);
         letter-spacing: 1px;
     }
-}
 
-form {
-    label {
-        font-size: 15px;
-    }
-
-    input,
-    input::placeholder {
-        font-size: 13px;
-    }
-
-    .form-text {
-        color: var(--customParaText);
-        font-style: italic;
-        font-size: 12px;
-        margin-top: 10px;
-    }
-}
-
-.form-check-input:checked {
-    background-color: var(--customBlue);
-    border-color: var(--customBlue);
-}
-
-form button {
-    margin-top: 10px;
-    background: transparent;
-    color: var(--customBlueLight);
-    border-color: var(--customBlue);
-    width: 100%;
-
-    &.text-decoration-underline {
-        padding: 2px;
-    }
-
-    &:not(.text-decoration-underline):hover,
-    &:not(.text-decoration-underline):active,
-    &:not(.text-decoration-underline):focus {
-        box-shadow: none;
-        background: var(--customBlue);
-        color: #fff;
-    }
-
-    &.text-decoration-underline:hover {
-        color: var(--customBlueLight);
-        text-decoration: none !important;
-    }
-
-    &.disabled {
-        opacity: 0.5;
+    @media screen and (max-width: 600px) {
+        & {
+            width: 89%;
+            margin: 0 10px 0 0;
+        }
     }
 }
 

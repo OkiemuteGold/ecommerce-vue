@@ -1,40 +1,33 @@
 <template>
-    <div class="overview-container">
-        <div class="container">
-            <div class="intro p-lg-4">
-                <div
-                    class="row h-100 justify-content-center align-items-center"
-                >
-                    <div class="col-md-6">
-                        <div class="left-content pr-lg-5">
-                            <h3>Overview Page</h3>
-                            <p>
-                                Lorem, ipsum dolor sit amet consectetur
-                                adipisicing elit. Accusantium, vitae.
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <img
-                            src="/img/svg/overview.svg"
-                            alt=""
-                            class="img-fluid"
-                        />
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="container">
+        <IntroComponent
+            :title="title"
+            :description="description"
+            :imageUrl="imageUrl"
+            :imageAlt="imageAlt"
+        ></IntroComponent>
     </div>
 </template>
 
 <script>
-export default {};
+import IntroComponent from "../components/extra/intro-component.vue";
+
+export default {
+    data() {
+        return {
+            title: "Overview Page",
+            description:
+                "Lorem ipsum dolor sit amet consectetur adipisicing elit Iure impedit.",
+            imageUrl: "/img/svg/overview.svg",
+            imageAlt: "overview image",
+        };
+    },
+
+    components: {
+        IntroComponent,
+    },
+};
 </script>
 
 <style scoped lang="scss">
-@media screen and (max-width: 426px) {
-    .left-content {
-        padding: 0 20px 30px;
-    }
-}
 </style>

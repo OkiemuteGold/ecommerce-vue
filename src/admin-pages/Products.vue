@@ -1,34 +1,17 @@
 <template>
-    <div class="product overview-container pb-5">
-        <div class="container">
-            <section class="intro px-md-4 section-padd-40">
-                <div
-                    class="row h-100 justify-content-center align-items-center"
-                >
-                    <div class="col-md-6">
-                        <div class="left-content pr-lg-5">
-                            <h3>Best Products</h3>
-                            <p>
-                                Lorem ipsum dolor sit amet consectetur
-                                adipisicing elit. Iure, impedit?
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <img
-                            src="/img/svg/products.svg"
-                            alt=""
-                            class="img-fluid"
-                        />
-                    </div>
-                </div>
-            </section>
+    <div class="container">
+        <IntroComponent
+            :title="title"
+            :description="description"
+            :imageUrl="imageUrl"
+            :imageAlt="imageAlt"
+        ></IntroComponent>
 
-            <hr />
+        <hr />
 
-            <!-- Save product form -->
-            <section class="product-test px-md-4 section-padd-40">
-                <!-- <h3>Basic CRUD in Firebase and Vue.</h3>
+        <!-- Save product form -->
+        <section class="row product-test pt-5">
+            <!-- <h3>Basic CRUD in Firebase and Vue.</h3>
                 <form class="add-product-form" @submit.prevent="addProduct">
                     <div class="form-group">
                         <input
@@ -59,62 +42,62 @@
                     </div>
                 </form> -->
 
+            <div class="product-test-title col-12">
                 <h3 class="float-left">Product list</h3>
+
                 <button
                     class="btn btn-primary float-right"
                     @click="openAddProductModal"
                 >
                     Add Product
                 </button>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Price</th>
-                                <th>Tag</th>
-                                <th>Description</th>
-                                <!-- <th>Image</th> -->
-                                <th>Modify</th>
-                            </tr>
-                        </thead>
+            </div>
 
-                        <tbody>
-                            <tr
-                                v-for="(product, index) in products"
-                                :key="index"
-                            >
-                                <th>{{ (index += 1) }}</th>
-                                <td>
-                                    {{ product.name }}
-                                </td>
-                                <td>
-                                    {{ product.price }}
-                                </td>
-                                <td>
-                                    {{ product.tag }}
-                                </td>
-                                <td class="description">
-                                    <span v-html="product.description"></span>
-                                </td>
-                                <td>
-                                    <i
-                                        class="fas fa-edit text-primary"
-                                        @click="editProduct(product)"
-                                    ></i>
+            <div class="col-12 table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Tag</th>
+                            <th>Description</th>
+                            <!-- <th>Image</th> -->
+                            <th>Modify</th>
+                        </tr>
+                    </thead>
 
-                                    <i
-                                        class="fas fa-trash-alt text-danger"
-                                        @click="deleteProduct(product.id)"
-                                    ></i>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-        </div>
+                    <tbody>
+                        <tr v-for="(product, index) in products" :key="index">
+                            <th>{{ (index += 1) }}</th>
+                            <td>
+                                {{ product.name }}
+                            </td>
+                            <td>
+                                {{ product.price }}
+                            </td>
+                            <td>
+                                {{ product.tag }}
+                            </td>
+                            <td class="description">
+                                <span v-html="product.description"></span>
+                            </td>
+                            <td>
+                                <i
+                                    class="fas fa-edit text-primary"
+                                    @click="editProduct(product)"
+                                ></i>
+
+                                <i
+                                    class="fas fa-trash-alt text-danger"
+                                    @click="deleteProduct(product.id)"
+                                ></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
         <!-- add product modal -->
         <div
@@ -264,16 +247,24 @@ import $ from "jquery";
 import "@/mixins";
 
 import { db } from "../firebase";
+import IntroComponent from "../components/extra/intro-component.vue";
 // import preLoader from "../components/extra/preLoader.vue";
 
 export default {
     components: {
         VueEditor,
+        IntroComponent,
         // preLoader
     },
 
     data() {
         return {
+            title: "Best Products",
+            description:
+                "Lorem ipsum dolor sit amet consectetur adipisicing elit Iure impedit.",
+            imageUrl: "/img/svg/products.svg",
+            imageAlt: "right product image",
+
             products: [],
             product: {
                 name: null,
@@ -345,14 +336,26 @@ export default {
 </script>
 
 <style scoped lang="scss">
-h3 {
-    margin-bottom: 20px;
-}
-
 // .add-product-form {
 //     max-width: 600px;
 //     margin-bottom: 40px;
 // }
+
+.product-test-title {
+    margin-bottom: 1.5rem;
+
+    @media screen and (max-width: 426px) {
+        h3,
+        button {
+            float: none !important;
+        }
+
+        button {
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+    }
+}
 
 tbody tr th,
 tbody tr td {
@@ -374,21 +377,15 @@ tbody tr td i {
     margin-left: 0.4rem;
     margin-right: 0.4rem;
     transition: 0.3s ease-in;
-}
 
-tbody tr td i:hover {
-    cursor: pointer;
-    transform: scale(1.1);
+    &:hover {
+        cursor: pointer;
+        transform: scale(1.1);
+    }
 }
 
 input::placeholder {
     font-size: 14px;
     font-style: italic;
-}
-
-@media screen and (max-width: 426px) {
-    .left-content {
-        padding: 0 20px 30px;
-    }
 }
 </style>

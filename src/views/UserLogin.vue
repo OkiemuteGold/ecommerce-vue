@@ -1,5 +1,5 @@
 <template>
-    <div class="user-login">
+    <div class="user-login main-form">
         <main>
             <div class="header">
                 <router-link to="/" class="nav-link">Home </router-link>
@@ -7,7 +7,8 @@
 
             <div class="welcome-text">
                 <h1>Welcome to <span>Vue</span> <span>Store</span></h1>
-                <p>Please login or Signup</p>
+                <hr />
+                <p>Login or Signup to continue</p>
             </div>
 
             <ul
@@ -26,9 +27,11 @@
                         aria-controls="pills-home"
                         aria-selected="true"
                     >
-                        Login
+                        <span v-if="!isForgotPassword">Login</span>
+                        <span v-else>Forgot</span>
                     </button>
                 </li>
+
                 <li class="nav-item" role="presentation">
                     <button
                         class="nav-link"
@@ -52,7 +55,7 @@
                     role="tabpanel"
                     aria-labelledby="pills-home-tab"
                 >
-                    <form>
+                    <form v-if="!isForgotPassword">
                         <div class="form-group mb-3">
                             <label for="loginEmail" class="form-label"
                                 >Email address</label
@@ -95,12 +98,62 @@
                                 >Keep me signed in</label
                             >
                         </div>
+
                         <button
                             type="submit"
                             class="btn"
-                            @click.prevent="login"
+                            :disabled="!isValid"
+                            @click.prevent="login(form.email, form.password)"
                         >
                             Login
+                        </button>
+
+                        <button
+                            class="btn border-0 text-decoration-underline mt-3"
+                            @click.prevent="isForgotPassword = true"
+                        >
+                            Forgot password?
+                        </button>
+                    </form>
+
+                    <form v-if="isForgotPassword">
+                        <div class="form-group mb-3">
+                            <label for="loginEmail" class="form-label"
+                                >Email address</label
+                            >
+                            <input
+                                type="email"
+                                class="form-control"
+                                id="loginEmail"
+                                aria-describedby="emailHelp"
+                                placeholder="Enter email address"
+                                v-model="form.email"
+                            />
+
+                            <div
+                                id="passwordHelp"
+                                class="form-text"
+                                v-if="!form.email"
+                            >
+                                <!-- Sorry, {{ form.email }} has not been registered. -->
+                                Please input the email you used to signup
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="btn"
+                            :disabled="!form.email"
+                            @click.prevent="recoverPassword(form.email)"
+                        >
+                            Recover Password
+                        </button>
+
+                        <button
+                            class="btn border-0 text-decoration-underline mt-3"
+                            @click.prevent="isForgotPassword = false"
+                        >
+                            Back to Login
                         </button>
                     </form>
                 </div>
@@ -121,7 +174,7 @@
                                 class="form-control"
                                 id="nameInput"
                                 placeholder="Enter your full name"
-                                v-model="form.fullname"
+                                v-model="form.fullName"
                             />
                         </div>
 
@@ -165,15 +218,22 @@
                                 type="checkbox"
                                 class="form-check-input"
                                 id="agreeCheck"
+                                v-model="hasAgreedToTerms"
                             />
                             <label class="form-check-label" for="agreeCheck"
                                 >Agree to terms and conditions</label
                             >
                         </div>
+
                         <button
                             type="submit"
                             class="btn"
-                            @click.prevent="registerUser"
+                            :disabled="
+                                !isValid || !form.fullName || !hasAgreedToTerms
+                            "
+                            @click.prevent="
+                                registerUser(form.email, form.password)
+                            "
                         >
                             Signup
                         </button>
@@ -185,72 +245,20 @@
 </template>
 
 <script>
-import $ from "jquery";
 import "@/mixins";
-import { fbase } from "../firebase";
 
 export default {
     data() {
         return {
             form: {
-                fullname: null,
-                email: null,
-                password: null,
+                fullName: "",
+                email: "",
+                password: "",
             },
+
+            isForgotPassword: false,
+            hasAgreedToTerms: false,
         };
-    },
-
-    methods: {
-        login() {
-            fbase
-                .auth()
-                .signInWithEmailAndPassword(this.form.email, this.form.password)
-                .then(() => {
-                    $("#loginModal").modal("hide");
-                    this.$router.replace("/admin");
-                })
-                .catch(function (error) {
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
-                    if (errorCode === "auth/wrong-password") {
-                        alert("Wrong password.");
-                    } else {
-                        alert(errorMessage);
-                    }
-                    console.log(error);
-                });
-        },
-
-        registerUser() {
-            fbase
-                .auth()
-                .createUserWithEmailAndPassword(
-                    this.form.email,
-                    this.form.password
-                )
-                .then(() => {
-                    $("#loginModal").modal("hide");
-                    // clear field only when its successful
-                    this.resetFormData();
-                    this.$router.replace("admin");
-                })
-                .catch((error) => {
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
-                    if (errorCode == "auth/weak-password") {
-                        alert("The password is too weak.");
-                    } else {
-                        alert(errorMessage);
-                    }
-                    console.log(error);
-                });
-
-            // this.form = {
-            //     fullname: null,
-            //     email: null,
-            //     password: null,
-            // };
-        },
     },
 };
 </script>
@@ -260,14 +268,17 @@ export default {
     width: 100vw;
     height: 100vh;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 0.5rem;
     background: rgba(0, 0, 0, 0.75);
 }
 
 main {
     max-width: 700px;
+    max-height: 630px;
+    height: 100%;
+    overflow-y: auto;
     padding: 50px 60px;
     background: rgba(0, 0, 0, 0.25);
     color: #fff;
@@ -279,21 +290,21 @@ main {
     position: absolute;
     top: 0;
     left: 0;
-    margin: 3px;
 
     a {
-        border-radius: 3px;
+        border-radius: 3px 0 3px 0;
         background: #fff;
         color: var(--customBlue);
     }
 }
 
 .welcome-text {
-    padding-bottom: 20px;
+    padding-bottom: 1.5rem;
     text-align: center;
 
     h1 {
         font-size: 35px;
+        margin-bottom: 1.5rem;
         text-shadow: 0.5px 0.5px 1px var(--customParaText);
         letter-spacing: 0.5px;
     }
@@ -304,72 +315,22 @@ main {
     }
 }
 
-.nav-pills .nav-link {
-    text-transform: uppercase;
-    color: var(--customBlue);
-
-    &:not(.nav-link.active):hover {
-        color: var(--customBlueLight);
-        background: rgba(0, 0, 0, 0.125);
-    }
-}
-
-.nav-pills .nav-link.active {
-    background: var(--customBlue);
-}
-
 .tab-content {
-    text-transform: capitalize;
     margin-top: 1.75rem;
 }
 
-form {
-    label {
-        font-size: 15px;
-    }
-
-    input,
-    input::placeholder {
-        font-size: 13px;
-    }
-
-    .form-text {
-        color: var(--customParaText);
-        font-style: italic;
-        font-size: 12px;
-        margin-top: 10px;
-    }
-}
-
-.form-check-input:checked {
-    background-color: var(--customBlue);
-    border-color: var(--customBlue);
-}
-
-form button {
-    margin-top: 10px;
-    background: transparent;
-    color: var(--customBlueLight);
-    border-color: var(--customBlue);
-    width: 100%;
-
-    &:hover,
-    &:active,
-    &:focus {
-        box-shadow: none;
-        background: var(--customBlue);
-        color: #fff;
-    }
-
-    &.disabled {
-        opacity: 0.5;
+@media screen and (min-width: 1092px) {
+    main {
+        max-height: 700px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 }
 
 @media screen and (max-width: 426px) {
     main {
         padding: 50px 20px;
-        height: 100%;
     }
 
     .header {
@@ -379,19 +340,12 @@ form button {
     }
 
     .welcome-text {
-        padding-bottom: 15px;
-
         h1 {
-            font-size: 22px;
+            font-size: 24px;
         }
         p {
             font-size: 13px;
         }
-    }
-
-    .tab-content {
-        text-transform: capitalize;
-        margin-top: 1.5rem;
     }
 
     label {

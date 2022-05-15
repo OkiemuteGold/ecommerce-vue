@@ -1,12 +1,19 @@
 import Vue from "vue";
+import { fbase } from "../firebase";
+import $ from "jquery";
 
 // import { mapGetters, mapState } from "vuex";
 
 Vue.mixin({
-    // computed: {
-    //     ...mapGetters(["user", "AppId", "RequestId"]),
-    //     ...mapState(["oxfordvestURL"]),
-    // },
+    computed: {
+        // ...mapGetters(["user", "AppId", "RequestId"]),
+        // ...mapState(["oxfordvestURL"]),
+
+        isValid() {
+            return this.form.email !== "" && this.form.password !== "";
+        },
+    },
+
     methods: {
         // capitalizeFirstLetter(str) {
         //     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -108,6 +115,7 @@ Vue.mixin({
         // },
 
         // proper way of resetting VueJS data properties to initial values
+
         resetFormData() {
             // Object.assign(this.$data, this.$options.data.apply(this));
 
@@ -115,6 +123,85 @@ Vue.mixin({
                 name: null,
                 price: null,
             };
+        },
+
+        login(email, password) {
+            fbase
+                .auth()
+                .signInWithEmailAndPassword(email, password)
+                .then(() => {
+                    $("#loginModal").modal("hide");
+                    this.$router.replace("/admin");
+                })
+                .catch(function (error) {
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    if (errorCode === "auth/wrong-password") {
+                        alert("Wrong password.");
+                    } else {
+                        alert(errorMessage);
+                    }
+                    console.log(error);
+                });
+        },
+
+        registerUser(email, password) {
+            fbase
+                .auth()
+                .createUserWithEmailAndPassword(
+                    email,
+                    password
+                )
+                .then(() => {
+                    $("#loginModal").modal("hide");
+                    // clear field only when its successful
+                    this.resetFormData();
+                    this.$router.replace("admin");
+                })
+                .catch((error) => {
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+                    if (errorCode == "auth/weak-password") {
+                        alert("The password is too weak.");
+                    } else {
+                        alert(errorMessage);
+                    }
+                    console.log(error);
+                });
+
+            // this.form = {
+            //     fullName: null,
+            //     email: null,
+            //     password: null,
+            // };
+        },
+
+        recoverPassword(email) {
+            fbase
+                .auth()
+                .sendPasswordResetEmail(email)
+                .then(() => {
+                    alert("Password reset email sent!");
+                    console.log(email);
+                })
+                .catch((error) => {
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+
+                    console.log(errorCode, errorMessage);
+                });
+        },
+
+        logout() {
+            fbase
+                .auth()
+                .signOut()
+                .then(() => {
+                    this.$router.replace("/");
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         },
     },
 });

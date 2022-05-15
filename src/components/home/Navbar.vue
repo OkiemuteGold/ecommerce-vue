@@ -39,6 +39,7 @@
                             </router-link>
                         </li>
                     </ul>
+
                     <form
                         class="
                             form-inline
@@ -54,13 +55,13 @@
                             placeholder="Search products..."
                             aria-label="Search"
                         />
-                        <a
+                        <div
                             class="btn btn-success mt-3 mt-lg-0"
                             data-bs-toggle="modal"
                             data-bs-target="#loginModal"
                         >
                             Get Started
-                        </a>
+                        </div>
                     </form>
 
                     <Login />

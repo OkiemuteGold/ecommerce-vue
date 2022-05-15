@@ -9,7 +9,7 @@
             <div class="sidebar-content">
                 <!-- sidebar-brand  -->
                 <div class="sidebar-item sidebar-brand">
-                    <router-link to="/admin/overview">VUE-STORE</router-link>
+                    <router-link to="/admin">VUE-STORE</router-link>
 
                     <!-- <div id="close-sidebar" @click="closeMenu">
                         <i class="fas fa-times"></i>
@@ -146,8 +146,7 @@
 
 <script>
 import $ from "jquery";
-
-import { fbase } from "../../firebase";
+import "@/mixins";
 
 export default {
     methods: {
@@ -178,18 +177,6 @@ export default {
         // closeMenu() {
         //     $(".page-wrapper").toggleClass("toggled");
         // },
-
-        logout() {
-            fbase
-                .auth()
-                .signOut()
-                .then(() => {
-                    this.$router.replace("/");
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
-        },
     },
 
     mounted() {
@@ -219,6 +206,9 @@ export default {
         left: 0;
         width: 265px;
         min-width: 230px;
+        -o-transition: width 0.5s ease, min-width 0.5s ease;
+        -moz-transition: width 0.5s ease, min-width 0.5s ease;
+        -webkit-transition: width 0.5s ease, min-width 0.5s ease;
         transition: width 0.5s ease, min-width 0.5s ease;
 
         .sidebar-content {
@@ -260,8 +250,11 @@ export default {
 
         .content-wrapper {
             flex-grow: 1;
-            padding: 0.5rem 1.2rem;
-            margin-top: 5rem;
+            padding: 6rem 2rem;
+
+            & > div {
+                max-width: 100%;
+            }
         }
     }
 

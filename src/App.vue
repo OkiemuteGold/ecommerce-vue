@@ -109,10 +109,83 @@ img {
     padding-bottom: 40px;
 }
 
+.section-padd-20 {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
 .no-top {
     padding-top: 0;
 }
 .no-bottom {
     padding-bottom: 0;
+}
+
+.main-form {
+    .nav-pills .nav-link {
+        text-transform: uppercase;
+        color: var(--customBlue);
+
+        &:not(.nav-link.active):hover {
+            color: var(--customBlueLight);
+            background: rgba(0, 0, 0, 0.125);
+        }
+    }
+
+    .nav-pills .nav-link.active {
+        background: var(--customBlue);
+    }
+
+    form {
+        label {
+            font-size: 15px;
+        }
+
+        input,
+        input::placeholder {
+            font-size: 13px;
+        }
+
+        .form-text {
+            color: var(--customParaText);
+            font-style: italic;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+    }
+
+    .form-check-input:checked {
+        background-color: var(--customBlue);
+        border-color: var(--customBlue);
+    }
+
+    form button {
+        margin-top: 10px;
+        background: transparent;
+        color: var(--customBlueLight);
+        border-color: var(--customBlue);
+        width: 100%;
+
+        &.text-decoration-underline {
+            padding: 2px;
+        }
+
+        &:not(.text-decoration-underline):hover,
+        &:not(.text-decoration-underline):active,
+        &:not(.text-decoration-underline):focus {
+            box-shadow: none;
+            background: var(--customBlue);
+            color: #fff;
+        }
+
+        &.text-decoration-underline:hover {
+            color: var(--customBlueLight);
+            text-decoration: none !important;
+        }
+
+        &.disabled {
+            opacity: 0.5;
+        }
+    }
 }
 </style>
