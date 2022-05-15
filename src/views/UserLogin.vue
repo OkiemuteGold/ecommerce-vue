@@ -92,7 +92,7 @@
                                 id="rememberCheck"
                             />
                             <label class="form-check-label" for="rememberCheck"
-                                >Remember me</label
+                                >Keep me signed in</label
                             >
                         </div>
                         <button

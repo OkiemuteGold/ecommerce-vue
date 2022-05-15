@@ -1,16 +1,19 @@
 <template>
-    <div class="page-wrapper default-theme sidebar-bg bg2 toggled">
-        <div id="show-sidebar" class="btn btn-sm btn-dark" @click="openMenu">
-            <i class="fas fa-bars"></i>
-        </div>
-        <nav id="sidebar" class="sidebar-wrapper">
+    <div class="page-wrapper default-theme sidebar-bg bg2">
+        <nav
+            id="sidebar"
+            class="sidebar-wrapper"
+            @mouseover="viewSidebarOnHover()"
+            @mouseout="hideSidebarOnHover()"
+        >
             <div class="sidebar-content">
                 <!-- sidebar-brand  -->
                 <div class="sidebar-item sidebar-brand">
                     <router-link to="/admin/overview">VUE-STORE</router-link>
-                    <div id="close-sidebar" @click="closeMenu">
+
+                    <!-- <div id="close-sidebar" @click="closeMenu">
                         <i class="fas fa-times"></i>
-                    </div>
+                    </div> -->
                 </div>
                 <!-- sidebar-header  -->
                 <div class="sidebar-item sidebar-header d-flex flex-nowrap">
@@ -114,13 +117,8 @@
 
             <!-- sidebar-footer  -->
             <div class="sidebar-footer">
-                <div class="dropdown">
-                    <router-link
-                        to="/admin/settings"
-                        data-toggle="dropdown"
-                        aria-haspopup="true"
-                        aria-expanded="false"
-                    >
+                <div class="settings">
+                    <router-link to="/admin/settings">
                         <i class="fa fa-cog"></i>
                         <span class="badge-sonar"></span>
                     </router-link>
@@ -130,7 +128,16 @@
 
         <!-- page-content  -->
         <main class="page-content">
-            <div class="px-2 px-md-4">
+            <div id="show-sidebar" class="sidebar-toggler">
+                <button
+                    aria-roledescription="toggle sidebar menu"
+                    @click="openMenu"
+                >
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <div class="content-wrapper">
                 <router-view />
             </div>
         </main>
@@ -145,12 +152,32 @@ import { fbase } from "../../firebase";
 export default {
     methods: {
         openMenu() {
+            if ($(".page-wrapper").hasClass("pinned")) {
+                $(".page-wrapper").removeClass("pinned sidebar-hovered");
+
+                $("#pin-sidebar.custom-control-input").prop("checked", false);
+            }
+
             $(".page-wrapper").toggleClass("toggled");
         },
 
-        closeMenu() {
-            $(".page-wrapper").toggleClass("toggled");
+        viewSidebarOnHover() {
+            if ($(".page-wrapper").hasClass("pinned")) {
+                $(".page-wrapper").removeClass("toggled");
+                $(".page-wrapper").addClass("sidebar-hovered");
+            }
         },
+
+        hideSidebarOnHover() {
+            if ($(".page-wrapper").hasClass("pinned")) {
+                $(".page-wrapper").addClass("toggled");
+                $(".page-wrapper").removeClass("sidebar-hovered");
+            }
+        },
+
+        // closeMenu() {
+        //     $(".page-wrapper").toggleClass("toggled");
+        // },
 
         logout() {
             fbase
@@ -182,17 +209,94 @@ export default {
 };
 </script>
 
-<style scoped>
-#show-sidebar {
-    padding: 1rem;
+<style scoped lang="scss">
+.page-wrapper {
+    display: flex;
+    align-items: center;
+
+    .sidebar-wrapper {
+        position: relative;
+        left: 0;
+        width: 265px;
+        min-width: 230px;
+        transition: width 0.5s ease, min-width 0.5s ease;
+
+        .sidebar-content {
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            padding: 0.125rem 0 0.125rem 0.5rem;
+            overflow-x: auto;
+
+            & > div {
+                flex-grow: 0;
+                margin: 0 0.75rem;
+                padding: 2px;
+            }
+
+            .badge-sonar {
+                height: 7px;
+                width: 7px;
+                top: 4px;
+                background-color: #dc3545;
+            }
+        }
+    }
+
+    .page-content {
+        height: 100%;
+        width: calc(100% - 230px);
+        min-width: calc(100% - 70px);
+        display: flex;
+        flex-direction: column;
+        padding-left: 0;
+
+        .content-wrapper {
+            flex-grow: 1;
+            padding: 0.5rem 1.2rem;
+            margin-top: 5rem;
+        }
+    }
+
+    &.toggled .sidebar-wrapper {
+        width: 70px;
+        min-width: 70px;
+    }
+
+    &.toggled .page-content,
+    &.toggled.pinned .page-content {
+        padding-left: initial;
+    }
 }
 
-.sidebar-wrapper .sidebar-footer {
-    max-width: 263px;
-}
-.sidebar-wrapper .sidebar-footer > div {
-    padding: 0 20px;
-    text-align: left;
+.sidebar-toggler {
+    position: fixed;
+    top: 0;
+    display: flex;
+    align-items: center;
+    height: 55px;
+    min-height: 55px;
+    width: 100%;
+    padding: 1rem 0.5rem;
+    box-shadow: 1px 1px 4px #9aa0b9;
+    z-index: 2;
+
+    button {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+
+        &:active i {
+            color: #dc3545;
+        }
+    }
 }
 
 .sidebar-menu ul li a,

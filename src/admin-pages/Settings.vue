@@ -48,12 +48,15 @@
                         >
                     </div>
 
-                    <div
-                        data-bg="bg1"
-                        class="theme theme-bg selected"
-                        @click.prevent="changeSideBackground($event)"
-                    ></div>
-                    <div
+                    <span v-for="(bg, index) in bgs" :key="index">
+                        <div
+                            v-if="index < totalBgs"
+                            :data-bg="`bg${index + 1}`"
+                            class="theme theme-bg"
+                            @click.prevent="changeSideBackground($event)"
+                        ></div>
+                    </span>
+                    <!-- <div
                         data-bg="bg2"
                         class="theme theme-bg"
                         @click.prevent="changeSideBackground($event)"
@@ -68,6 +71,11 @@
                         class="theme theme-bg"
                         @click.prevent="changeSideBackground($event)"
                     ></div>
+                    <div
+                        data-bg="bg5"
+                        class="theme theme-bg"
+                        @click.prevent="changeSideBackground($event)"
+                    ></div> -->
                 </div>
 
                 <div class="form-group col-md-12">
@@ -102,7 +110,7 @@
                     <div
                         data-theme="light-theme"
                         class="theme light-theme"
-                        @click.prevent="changeSideBackground($event)"
+                        @click.prevent="changeTheme($event)"
                     ></div>
                 </div>
             </div>
@@ -114,10 +122,24 @@
 import $ from "jquery";
 
 export default {
+    data() {
+        return {
+            totalBgs: null,
+            bgs: "bg1 bg2 bg3 bg4 bg5",
+        };
+    },
     methods: {
+        getNumofBg() {
+            const arr = this.bgs.split(" ");
+            let wordLength = arr.filter((word) => word !== "").length;
+            this.totalBgs = wordLength;
+
+            // console.log(this.totalBgs);
+        },
+
         changeSideBackground(event) {
             let activeBg = event.target;
-            let bgs = "bg1 bg2 bg3 bg4";
+            let bgs = this.bgs;
 
             $("[data-bg]").removeClass("selected");
             $(activeBg).addClass("selected");
@@ -148,22 +170,15 @@ export default {
 
         pinSidebar() {
             if ($(".page-wrapper").hasClass("pinned")) {
-                $(".page-wrapper").removeClass("pinned");
-                $("#sidebar").unbind("hover");
+                $(".page-wrapper").removeClass("pinned toggled");
             } else {
-                $(".page-wrapper").addClass("pinned");
-                $("#sidebar").hover(
-                    function () {
-                        console.log("mouseenter");
-                        $(".page-wrapper").addClass("sidebar-hovered");
-                    },
-                    function () {
-                        console.log("mouseout");
-                        $(".page-wrapper").removeClass("sidebar-hovered");
-                    }
-                );
+                $(".page-wrapper").addClass("pinned toggled");
             }
         },
+    },
+
+    mounted() {
+        this.getNumofBg();
     },
 };
 </script>

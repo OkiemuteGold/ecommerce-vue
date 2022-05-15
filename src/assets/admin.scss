@@ -632,6 +632,10 @@ body {
   background-image: url(/img/bg4.jpg);
 }
 
+.sidebar-bg.bg5 .sidebar-wrapper {
+  background-image: url(/img/bg5.jpg);
+}
+
 [data-bg="bg1"] {
   background-image: url(/img/bg1.jpg);
 }
@@ -646,6 +650,10 @@ body {
 
 [data-bg="bg4"] {
   background-image: url(/img/bg4.jpg);
+}
+
+[data-bg="bg5"] {
+  background-image: url(/img/bg5.jpg);
 }
 
 /*---- border-radius ------*/

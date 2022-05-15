@@ -36,7 +36,8 @@
                                 aria-controls="pills-home"
                                 aria-selected="true"
                             >
-                                Login
+                                <span v-if="!isForgotPassword">Login</span>
+                                <span v-else>Forgot Password</span>
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
@@ -63,9 +64,10 @@
                                 role="tabpanel"
                                 aria-labelledby="pills-home-tab"
                             >
-                                <p>Please login</p>
+                                <p v-if="!isForgotPassword">Please login</p>
+                                <p v-else>Recover Password</p>
 
-                                <form>
+                                <form v-if="!isForgotPassword">
                                     <div class="form-group mb-3">
                                         <label
                                             for="loginEmail"
@@ -115,7 +117,7 @@
                                         <label
                                             class="form-check-label"
                                             for="rememberCheck"
-                                            >Remember me</label
+                                            >Keep me signed in</label
                                         >
                                     </div>
                                     <button
@@ -124,6 +126,66 @@
                                         @click.prevent="login"
                                     >
                                         Login
+                                    </button>
+
+                                    <button
+                                        class="
+                                            btn
+                                            border-0
+                                            text-decoration-underline
+                                            mt-3
+                                        "
+                                        @click.prevent="isForgotPassword = true"
+                                    >
+                                        Forgot password?
+                                    </button>
+                                </form>
+
+                                <form v-if="isForgotPassword">
+                                    <div class="form-group mb-3">
+                                        <label
+                                            for="loginEmail"
+                                            class="form-label"
+                                            >Email address</label
+                                        >
+                                        <input
+                                            type="email"
+                                            class="form-control"
+                                            id="loginEmail"
+                                            aria-describedby="emailHelp"
+                                            placeholder="Enter email address"
+                                            v-model="form.email"
+                                        />
+
+                                        <div
+                                            id="passwordHelp"
+                                            class="form-text"
+                                        >
+                                            Sorry, {{ form.email }} has not been
+                                            registered.
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        class="btn"
+                                        @click.prevent="recoverPassword"
+                                    >
+                                        Recover Password
+                                    </button>
+
+                                    <button
+                                        class="
+                                            btn
+                                            border-0
+                                            text-decoration-underline
+                                            mt-3
+                                        "
+                                        @click.prevent="
+                                            isForgotPassword = false
+                                        "
+                                    >
+                                        Back to Login
                                     </button>
                                 </form>
                             </div>
@@ -241,6 +303,8 @@ export default {
                 email: null,
                 password: null,
             },
+
+            isForgotPassword: false,
         };
     },
 
@@ -304,6 +368,22 @@ export default {
             //     email: null,
             //     password: null,
             // };
+        },
+
+        recoverPassword() {
+            fbase
+                .auth()
+                .sendPasswordResetEmail(this.form.email)
+                .then(() => {
+                    alert("Password reset email sent!");
+                    console.log(this.form.email);
+                })
+                .catch((error) => {
+                    var errorCode = error.code;
+                    var errorMessage = error.message;
+
+                    console.log(errorCode, errorMessage);
+                });
         },
     },
 };
@@ -373,12 +453,21 @@ form button {
     border-color: var(--customBlue);
     width: 100%;
 
-    &:hover,
-    &:active,
-    &:focus {
+    &.text-decoration-underline {
+        padding: 2px;
+    }
+
+    &:not(.text-decoration-underline):hover,
+    &:not(.text-decoration-underline):active,
+    &:not(.text-decoration-underline):focus {
         box-shadow: none;
         background: var(--customBlue);
         color: #fff;
+    }
+
+    &.text-decoration-underline:hover {
+        color: var(--customBlueLight);
+        text-decoration: none !important;
     }
 
     &.disabled {
