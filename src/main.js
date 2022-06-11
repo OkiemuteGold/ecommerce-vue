@@ -13,6 +13,9 @@ import "popper.js";
 import "bootstrap";
 import "./assets/app.scss";
 
+import Swal from 'sweetalert2';
+window.Swal = Swal;
+
 import ScrollAnimation from "./directives/scroll_animation"
 Vue.directive("scroll_animation", ScrollAnimation);
 

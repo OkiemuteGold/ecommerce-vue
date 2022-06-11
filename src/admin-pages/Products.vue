@@ -86,11 +86,13 @@
                                 <i
                                     class="fas fa-edit text-primary"
                                     @click="editProduct(product)"
+                                    title="edit product"
                                 ></i>
 
                                 <i
                                     class="fas fa-trash-alt text-danger"
-                                    @click="deleteProduct(product.id)"
+                                    @click="deleteProduct(product)"
+                                    title="delete product"
                                 ></i>
                             </td>
                         </tr>
@@ -245,6 +247,7 @@
 import { VueEditor } from "vue2-editor";
 import $ from "jquery";
 import "@/mixins";
+import Swal from "sweetalert2";
 
 import { db } from "../firebase";
 import IntroComponent from "../components/extra/intro-component.vue";
@@ -286,12 +289,6 @@ export default {
         };
     },
 
-    // filters: {
-    //     strippedContent: function (string) {
-    //         return string.replace(/<\/?[^>]+>/gi, " ");
-    //     },
-    // },
-
     methods: {
         checkForm: function () {
             const checkParams =
@@ -324,7 +321,28 @@ export default {
 
         readProduct() {},
 
-        deleteProduct() {},
+        deleteProduct(product) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#0d6cfd",
+                cancelButtonColor: "#dc3545",
+                confirmButtonText: "Yes, delete it!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // console.log(product['.key']);
+                    this.$firestore.products.doc(product[".key"]).delete();
+
+                    Swal.fire(
+                        "Deleted!",
+                        `${product.name} has been deleted.`,
+                        "success"
+                    );
+                }
+            });
+        },
 
         editProduct() {},
 

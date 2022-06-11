@@ -14,6 +14,12 @@ Vue.mixin({
         },
     },
 
+    filters: {
+        strippedContent: function (string) {
+            return string.replace(/<\/?[^>]+>/gi, " ");
+        },
+    },
+
     methods: {
         // capitalizeFirstLetter(str) {
         //     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -115,7 +121,6 @@ Vue.mixin({
         // },
 
         // proper way of resetting VueJS data properties to initial values
-
         resetFormData() {
             // Object.assign(this.$data, this.$options.data.apply(this));
 
@@ -182,13 +187,14 @@ Vue.mixin({
                 .sendPasswordResetEmail(email)
                 .then(() => {
                     alert("Password reset email sent!");
-                    console.log(email);
                 })
                 .catch((error) => {
-                    var errorCode = error.code;
+                    // var errorCode = error.code;
                     var errorMessage = error.message;
 
-                    console.log(errorCode, errorMessage);
+                    alert(errorMessage);
+
+                    // console.log(error, errorCode, errorMessage);
                 });
         },
 

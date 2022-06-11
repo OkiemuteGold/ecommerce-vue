@@ -1,5 +1,5 @@
 <template>
-    <div class="page-wrapper default-theme sidebar-bg bg2">
+    <div class="page-wrapper default-theme sidebar-bg bg2 toggled">
         <nav
             id="sidebar"
             class="sidebar-wrapper"
@@ -250,7 +250,8 @@ export default {
 
         .content-wrapper {
             flex-grow: 1;
-            padding: 6rem 2rem;
+            padding: 6rem 3rem;
+            z-index: 998;
 
             & > div {
                 max-width: 100%;
@@ -279,7 +280,8 @@ export default {
     width: 100%;
     padding: 1rem 0.5rem;
     box-shadow: 1px 1px 4px #9aa0b9;
-    z-index: 2;
+    backdrop-filter: blur(10px);
+    z-index: 999;
 
     button {
         background: none;
