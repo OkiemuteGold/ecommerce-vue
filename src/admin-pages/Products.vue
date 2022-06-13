@@ -47,7 +47,7 @@
 
                 <button
                     class="btn btn-primary float-right"
-                    @click="openAddProductModal"
+                    @click="openAddProductModal('add')"
                 >
                     Add Product
                 </button>
@@ -113,13 +113,17 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="addProductModalLabel">
-                            Add New Product
+                            <span v-if="modal == 'add'">Add New Product</span>
+                            <span v-if="modal == 'edit'">
+                                Edit Product Details
+                            </span>
                         </h5>
                         <button
                             type="button"
                             class="btn-close"
                             data-bs-dismiss="modal"
                             aria-label="Close"
+                            @click="closeModal"
                         ></button>
                     </div>
 
@@ -229,8 +233,18 @@
                         <button
                             type="button"
                             class="btn btn-primary"
+                            @click="updateProduct"
+                            :disabled="isInValid"
+                            v-if="modal == 'edit'"
+                        >
+                            Update Details
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-primary"
                             @click="addProduct"
                             :disabled="isInValid"
+                            v-if="modal == 'add'"
                         >
                             Add Product
                         </button>
@@ -248,6 +262,7 @@ import { VueEditor } from "vue2-editor";
 import $ from "jquery";
 import "@/mixins";
 import Swal from "sweetalert2";
+import Toast from "sweetalert2";
 
 import { db } from "../firebase";
 import IntroComponent from "../components/extra/intro-component.vue";
@@ -276,7 +291,10 @@ export default {
                 tag: null,
                 image: null,
             },
+            isUpdateDetailsBtnClicked: false,
+            originalProductDetails: {},
             isInValid: true,
+            modal: null,
 
             customToolbar: [],
             // loading: false,
@@ -304,20 +322,27 @@ export default {
             this.isInValid = false;
         },
 
-        openAddProductModal() {
+        closeModal() {
+            if (!this.isUpdateDetailsBtnClicked && this.modal == "edit") {
+                this.product = this.originalProductDetails;
+                console.log(
+                    this.products,
+                    this.originalProductDetails,
+                    this.isUpdateDetailsBtnClicked
+                );
+            }
+        },
+
+        openAddProductModal(mode) {
+            this.resetProductDetails();
+            this.modal = mode;
             $("#addProductModal").modal("show");
         },
 
         addProduct() {
             this.$firestore.products.add(this.product);
-            this.resetFormData();
+            this.resetProductDetails();
         },
-
-        uploadImage() {},
-
-        deleteImage() {},
-
-        addTag() {},
 
         readProduct() {},
 
@@ -333,20 +358,37 @@ export default {
             }).then((result) => {
                 if (result.isConfirmed) {
                     // console.log(product['.key']);
-                    this.$firestore.products.doc(product[".key"]).delete();
+                    this.$firestore.products.doc(product.id).delete();
 
-                    Swal.fire(
-                        "Deleted!",
-                        `${product.name} has been deleted.`,
-                        "success"
-                    );
+                    // Swal.fire(`${product.name} has been deleted.`, "success");
+
+                    Toast.fire({
+                        icon: "success",
+                        title: `${product.name} has been deleted.`,
+                    });
                 }
             });
         },
 
-        editProduct() {},
+        updateProduct() {
+            this.$firestore.products.doc(this.product.id).update(this.product);
 
-        updateProduct() {},
+            this.resetProductDetails();
+
+            this.isUpdateDetailsBtnClicked = true;
+        },
+
+        editProduct(product) {
+            this.openAddProductModal("edit");
+            this.product = product;
+            this.originalProductDetails = product;
+        },
+
+        uploadImage() {},
+
+        deleteImage() {},
+
+        addTag() {},
     },
 
     mounted() {},

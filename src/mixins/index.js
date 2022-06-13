@@ -121,12 +121,23 @@ Vue.mixin({
         // },
 
         // proper way of resetting VueJS data properties to initial values
+        resetProductDetails() {
+            this.product = {
+                name: null,
+                description: null,
+                price: null,
+                tag: null,
+                image: null,
+            };
+        },
+
         resetFormData() {
             // Object.assign(this.$data, this.$options.data.apply(this));
 
-            this.product = {
-                name: null,
-                price: null,
+            this.form = {
+                fullName: "",
+                email: "",
+                password: "",
             };
         },
 

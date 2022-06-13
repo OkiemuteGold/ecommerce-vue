@@ -251,7 +251,6 @@ export default {
         .content-wrapper {
             flex-grow: 1;
             padding: 6rem 3rem;
-            z-index: 998;
 
             & > div {
                 max-width: 100%;

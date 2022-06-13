@@ -192,4 +192,8 @@ img {
         }
     }
 }
+
+.ql-snow .ql-editor p {
+    color: #212529;
+}
 </style>
