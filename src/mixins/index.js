@@ -1,6 +1,8 @@
 import Vue from "vue";
 import { fbase } from "../firebase";
 import $ from "jquery";
+import Swal from "sweetalert2";
+import Toast from "sweetalert2";
 
 // import { mapGetters, mapState } from "vuex";
 
@@ -21,6 +23,22 @@ Vue.mixin({
     },
 
     methods: {
+        notificationToast(payload) {
+            Toast.fire({
+                icon: payload.icon,
+                title: payload.title,
+                text: payload.text,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 4000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+        },
+
         // capitalizeFirstLetter(str) {
         //     return str.charAt(0).toUpperCase() + str.slice(1);
         // },
@@ -147,17 +165,41 @@ Vue.mixin({
                 .signInWithEmailAndPassword(email, password)
                 .then(() => {
                     $("#loginModal").modal("hide");
-                    this.$router.replace("/admin");
+
+                    Toast.fire({
+                        icon: "success",
+                        title: "Login successful!",
+                        text: "Redirecting to admin page...",
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 4000,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.addEventListener('mouseenter', Swal.stopTimer)
+                            toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        }
+                    }).then(() => {
+                        this.$router.replace("/admin");
+                    });
                 })
                 .catch(function (error) {
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
+                    const errorCode = error.code;
+                    let errorMessage;
+
                     if (errorCode === "auth/wrong-password") {
-                        alert("Wrong password.");
+                        errorMessage = "Wrong password.";
                     } else {
-                        alert(errorMessage);
+                        errorMessage = error.message;
                     }
-                    console.log(error);
+
+                    const payload = {
+                        icon: "error",
+                        title: "Login failed!",
+                        text: errorMessage,
+                    };
+
+                    this.notificationToast(payload);
+                    // console.log(error);
                 });
         },
 
@@ -170,19 +212,34 @@ Vue.mixin({
                 )
                 .then(() => {
                     $("#loginModal").modal("hide");
-                    // clear field only when its successful
                     this.resetFormData();
-                    this.$router.replace("admin");
+
+                    const payload = {
+                        icon: "success",
+                        title: "Registration successful!",
+                        text: "Please login.",
+                    };
+                    this.notificationToast(payload);
+                    // this.$router.replace("/admin");
                 })
                 .catch((error) => {
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
+                    const errorCode = error.code;
+                    let title, errorMessage;
+
                     if (errorCode == "auth/weak-password") {
-                        alert("The password is too weak.");
+                        title = "The password is too weak.";
+                        errorMessage = null;
                     } else {
-                        alert(errorMessage);
+                        title = "Registration failed!";
+                        errorMessage = error.message;
                     }
-                    console.log(error);
+
+                    const payload = {
+                        icon: "error",
+                        title: title,
+                        text: errorMessage,
+                    };
+                    this.notificationToast(payload);
                 });
 
             // this.form = {
@@ -197,28 +254,52 @@ Vue.mixin({
                 .auth()
                 .sendPasswordResetEmail(email)
                 .then(() => {
-                    alert("Password reset email sent!");
+                    const payload = {
+                        icon: "success",
+                        title: "Password reset email sent!",
+                        text: null,
+                    };
+                    this.notificationToast(payload);
                 })
                 .catch((error) => {
-                    // var errorCode = error.code;
-                    var errorMessage = error.message;
-
-                    alert(errorMessage);
-
-                    // console.log(error, errorCode, errorMessage);
+                    const payload = {
+                        icon: "error",
+                        title: error.message,
+                        text: null,
+                    };
+                    this.notificationToast(payload);
+                    // console.log(error);
                 });
         },
 
         logout() {
-            fbase
-                .auth()
-                .signOut()
-                .then(() => {
-                    this.$router.replace("/");
-                })
-                .catch((error) => {
-                    console.log(error);
-                });
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You will be logged out of the admin page!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#0d6cfd",
+                cancelButtonColor: "#dc3545",
+                confirmButtonText: "Yes, Logout!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fbase
+                        .auth()
+                        .signOut()
+                        .then(() => {
+                            this.$router.replace("/");
+                        })
+                        .catch((error) => {
+                            const payload = {
+                                icon: "error",
+                                title: error.message,
+                                text: null,
+                            };
+                            this.notificationToast(payload);
+                            // console.log(error);
+                        });
+                }
+            });
         },
     },
 });

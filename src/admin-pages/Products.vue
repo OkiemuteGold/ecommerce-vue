@@ -123,7 +123,6 @@
                             class="btn-close"
                             data-bs-dismiss="modal"
                             aria-label="Close"
-                            @click="closeModal"
                         ></button>
                     </div>
 
@@ -262,7 +261,6 @@ import { VueEditor } from "vue2-editor";
 import $ from "jquery";
 import "@/mixins";
 import Swal from "sweetalert2";
-import Toast from "sweetalert2";
 
 import { db } from "../firebase";
 import IntroComponent from "../components/extra/intro-component.vue";
@@ -322,16 +320,16 @@ export default {
             this.isInValid = false;
         },
 
-        closeModal() {
-            if (!this.isUpdateDetailsBtnClicked && this.modal == "edit") {
-                this.product = this.originalProductDetails;
-                console.log(
-                    this.products,
-                    this.originalProductDetails,
-                    this.isUpdateDetailsBtnClicked
-                );
-            }
-        },
+        // closeModal() {
+        //     if (!this.isUpdateDetailsBtnClicked && this.modal == "edit") {
+        //         this.product = this.originalProductDetails;
+        //         console.log(
+        //             this.products,
+        //             this.originalProductDetails,
+        //             this.isUpdateDetailsBtnClicked
+        //         );
+        //     }
+        // },
 
         openAddProductModal(mode) {
             this.resetProductDetails();
@@ -341,6 +339,14 @@ export default {
 
         addProduct() {
             this.$firestore.products.add(this.product);
+
+            const payload = {
+                icon: "success",
+                title: `${this.product.name} added sucessfully!`,
+                text: null,
+            };
+            this.notificationToast(payload);
+
             this.resetProductDetails();
         },
 
@@ -361,27 +367,34 @@ export default {
                     this.$firestore.products.doc(product.id).delete();
 
                     // Swal.fire(`${product.name} has been deleted.`, "success");
-
-                    Toast.fire({
+                    const payload = {
                         icon: "success",
-                        title: `${product.name} has been deleted.`,
-                    });
+                        title: `${product.name} has been deleted!`,
+                        text: null,
+                    };
+                    this.notificationToast(payload);
                 }
             });
         },
 
         updateProduct() {
             this.$firestore.products.doc(this.product.id).update(this.product);
-
             this.resetProductDetails();
+            $("#addProductModal").modal("hide");
 
-            this.isUpdateDetailsBtnClicked = true;
+            const payload = {
+                icon: "success",
+                title: "Product details updated sucessfully!",
+                text: null,
+            };
+            this.notificationToast(payload);
+            // this.isUpdateDetailsBtnClicked = true;
         },
 
         editProduct(product) {
             this.openAddProductModal("edit");
             this.product = product;
-            this.originalProductDetails = product;
+            // this.originalProductDetails = product;
         },
 
         uploadImage() {},
