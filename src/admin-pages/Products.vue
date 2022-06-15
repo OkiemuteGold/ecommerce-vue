@@ -158,28 +158,40 @@
                                     <input
                                         type="text"
                                         class="form-control"
-                                        placeholder="Product price"
+                                        placeholder="Enter product price"
                                         v-model="product.price"
                                         @input="checkForm"
                                     />
                                 </div>
 
                                 <div class="form-group">
+                                    <p class="tag-instruction">
+                                        Add comma (,) after each tag to add
+                                        multiple tags
+                                    </p>
+
                                     <input
                                         type="text"
                                         class="form-control"
-                                        placeholder="Product tags"
-                                        v-model="product.tag"
+                                        placeholder="Enter tags"
+                                        title="Add comma (,) after each tag to add multiple tags"
+                                        v-model="tagInput"
                                         @keyup.188="addTag"
                                         @input="checkForm"
                                     />
 
-                                    <div class="d-flex">
+                                    <div
+                                        class="tags"
+                                        v-if="
+                                            product.tags &&
+                                            product.tags.length > 0
+                                        "
+                                    >
                                         <p
                                             v-for="(tag, index) in product.tags"
                                             :key="index"
                                         >
-                                            <span class="p-1">{{ tag }}</span>
+                                            {{ tag | capitalizeFirstLetter }}
                                         </p>
                                     </div>
                                 </div>
@@ -286,9 +298,11 @@ export default {
                 name: null,
                 description: null,
                 price: null,
-                tag: null,
+                tags: null,
                 image: null,
             },
+            tagInput: null,
+            tagsArray: [],
             isUpdateDetailsBtnClicked: false,
             originalProductDetails: {},
             isInValid: true,
@@ -311,9 +325,9 @@ export default {
                 !this.product.name ||
                 !this.product.description ||
                 !this.product.price ||
-                !this.product.tag;
+                !this.tagInput;
 
-            if (checkParams) {
+            if (checkParams && this.tagsArray.length == 0) {
                 this.isInValid = true;
                 return;
             }
@@ -338,6 +352,7 @@ export default {
         },
 
         addProduct() {
+            this.product.tags = this.tagsArray;
             this.$firestore.products.add(this.product);
 
             const payload = {
@@ -378,6 +393,8 @@ export default {
         },
 
         updateProduct() {
+            console.log(this.product);
+            // this.addTag();
             this.$firestore.products.doc(this.product.id).update(this.product);
             this.resetProductDetails();
             $("#addProductModal").modal("hide");
@@ -401,7 +418,18 @@ export default {
 
         deleteImage() {},
 
-        addTag() {},
+        addTag() {
+            this.tagsArray.push(this.removeComma(this.tagInput));
+
+            if (this.tagsArray && this.tagsArray.length > 0) {
+                this.product.tags = this.tagsArray;
+
+                console.log(typeof this.tagsArray);
+                console.log(this.product.tags);
+            }
+
+            this.tagInput = "";
+        },
     },
 
     mounted() {},
@@ -457,8 +485,30 @@ tbody tr td i {
     }
 }
 
-input::placeholder {
-    font-size: 14px;
-    font-style: italic;
+input {
+    font-size: 0.875rem;
+
+    &::placeholder {
+        font-style: italic;
+    }
+}
+
+.tag-instruction {
+    font-size: 0.75rem;
+    margin-bottom: 5px;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+
+    & p {
+        font-size: 0.75rem;
+        padding: 2px 6px;
+        margin: 8px 2px 2px;
+        background: var(--customSectionBg);
+        color: var(--customText);
+        border-radius: 4px;
+    }
 }
 </style>

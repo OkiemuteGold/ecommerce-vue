@@ -20,9 +20,18 @@ Vue.mixin({
         strippedContent: function (string) {
             return string.replace(/<\/?[^>]+>/gi, " ");
         },
+
+        capitalizeFirstLetter(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        },
     },
 
     methods: {
+        removeComma: function (value) {
+            value = value.replace(",", "");
+            return value;
+        },
+
         notificationToast(payload) {
             Toast.fire({
                 icon: payload.icon,
@@ -39,9 +48,6 @@ Vue.mixin({
             });
         },
 
-        // capitalizeFirstLetter(str) {
-        //     return str.charAt(0).toUpperCase() + str.slice(1);
-        // },
         // addComma(value) {
         //     return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         // },
@@ -147,6 +153,8 @@ Vue.mixin({
                 tag: null,
                 image: null,
             };
+            this.tagInput = null;
+            this.tagsArray = [];
         },
 
         resetFormData() {
