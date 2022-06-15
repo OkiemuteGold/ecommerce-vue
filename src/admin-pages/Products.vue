@@ -76,9 +76,17 @@
                             <td>
                                 {{ product.price }}
                             </td>
-                            <td>
-                                {{ product.tag }}
+
+                            <td v-if="product.tags && product.tags.length > 0">
+                                <span
+                                    v-for="(productTag, index) in product.tags"
+                                    :key="index"
+                                >
+                                    {{ addHash(productTag) }}
+                                </span>
                             </td>
+                            <td v-else class="text-danger">(no tag)</td>
+
                             <td class="description">
                                 <span v-html="product.description"></span>
                             </td>
@@ -176,8 +184,9 @@
                                         placeholder="Enter tags"
                                         title="Add comma (,) after each tag to add multiple tags"
                                         v-model="tagInput"
-                                        @keyup.188="addTag"
                                         @input="checkForm"
+                                        @change="addTag"
+                                        @keyup.188="addTag"
                                     />
 
                                     <div
@@ -191,9 +200,22 @@
                                             v-for="(tag, index) in product.tags"
                                             :key="index"
                                         >
-                                            {{ tag | capitalizeFirstLetter }}
+                                            {{ tag }}
                                         </p>
                                     </div>
+
+                                    <p
+                                        class="
+                                            tag-error
+                                            font-italic
+                                            text-danger
+                                            mt-2
+                                            mb-1
+                                        "
+                                    >
+                                        Please enter tag before pressing a comma
+                                        (,)
+                                    </p>
                                 </div>
 
                                 <div class="form-group">
@@ -299,7 +321,7 @@ export default {
                 description: null,
                 price: null,
                 tags: null,
-                image: null,
+                images: null,
             },
             tagInput: null,
             tagsArray: [],
@@ -349,10 +371,12 @@ export default {
             this.resetProductDetails();
             this.modal = mode;
             $("#addProductModal").modal("show");
+
+            $(".tags").show("slow");
+            $(".tag-error").hide("slow");
         },
 
         addProduct() {
-            this.product.tags = this.tagsArray;
             this.$firestore.products.add(this.product);
 
             const payload = {
@@ -360,8 +384,8 @@ export default {
                 title: `${this.product.name} added sucessfully!`,
                 text: null,
             };
-            this.notificationToast(payload);
 
+            this.notificationToast(payload);
             this.resetProductDetails();
         },
 
@@ -393,8 +417,6 @@ export default {
         },
 
         updateProduct() {
-            console.log(this.product);
-            // this.addTag();
             this.$firestore.products.doc(this.product.id).update(this.product);
             this.resetProductDetails();
             $("#addProductModal").modal("hide");
@@ -414,21 +436,42 @@ export default {
             // this.originalProductDetails = product;
         },
 
-        uploadImage() {},
+        uploadImage(event) {
+            const image = event.target.files[0];
+            this.product.images = image;
+            console.log(image);
+        },
 
         deleteImage() {},
 
         addTag() {
             this.tagsArray.push(this.removeComma(this.tagInput));
+            this.isTagDisplayed();
 
             if (this.tagsArray && this.tagsArray.length > 0) {
-                this.product.tags = this.tagsArray;
-
-                console.log(typeof this.tagsArray);
-                console.log(this.product.tags);
+                this.product.tags = this.tagsArray.filter((tag) => {
+                    return tag !== "";
+                });
+                // console.log(this.tagsArray, this.product.tags);
             }
 
             this.tagInput = "";
+        },
+
+        isTagDisplayed() {
+            this.tagsArray.forEach((tag) => {
+                if (tag == "") {
+                    $(".tags").hide();
+                    $(".tag-error").show();
+
+                    this.isInValid = true;
+                } else {
+                    $(".tags").show();
+                    $(".tag-error").hide();
+
+                    this.isInValid = false;
+                }
+            });
         },
     },
 
@@ -464,6 +507,10 @@ tbody tr td {
     color: var(--customText);
 }
 
+tbody tr td:first-of-type {
+    text-transform: capitalize;
+}
+
 thead th {
     background-color: var(--customSectionBg);
     border-bottom-color: var(--customText) !important;
@@ -494,7 +541,7 @@ input {
 }
 
 .tag-instruction {
-    font-size: 0.75rem;
+    font-size: 13px;
     margin-bottom: 5px;
 }
 
@@ -503,12 +550,17 @@ input {
     flex-wrap: wrap;
 
     & p {
-        font-size: 0.75rem;
+        font-size: 13px;
         padding: 2px 6px;
         margin: 8px 2px 2px;
         background: var(--customSectionBg);
         color: var(--customText);
         border-radius: 4px;
+        text-transform: lowercase;
     }
+}
+
+.tag-error {
+    font-size: 13px;
 }
 </style>

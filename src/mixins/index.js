@@ -27,11 +27,6 @@ Vue.mixin({
     },
 
     methods: {
-        removeComma: function (value) {
-            value = value.replace(",", "");
-            return value;
-        },
-
         notificationToast(payload) {
             Toast.fire({
                 icon: payload.icon,
@@ -46,6 +41,21 @@ Vue.mixin({
                     toast.addEventListener('mouseleave', Swal.resumeTimer)
                 }
             });
+        },
+
+        removeComma: function (value) {
+            value = value.replace(",", "");
+            return value;
+        },
+
+        addHash: function (value) {
+            if (value.length > 0) {
+                if (value === ",") {
+                    return true;
+                } else {
+                    return value = '#' + value;
+                }
+            }
         },
 
         // addComma(value) {
@@ -150,8 +160,8 @@ Vue.mixin({
                 name: null,
                 description: null,
                 price: null,
-                tag: null,
-                image: null,
+                tags: null,
+                images: null,
             };
             this.tagInput = null;
             this.tagsArray = [];
