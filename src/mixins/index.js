@@ -165,6 +165,8 @@ Vue.mixin({
             };
             this.tagInput = null;
             this.tagsArray = [];
+            this.imageObj = null;
+            this.imageArray = [];
         },
 
         resetFormData() {
@@ -318,6 +320,19 @@ Vue.mixin({
                         });
                 }
             });
+        },
+
+        generateUniqueId(fileName) {
+            let d = new Date();
+            let year = d.getFullYear(),
+                month = d.getMonth() + 1,
+                day = d.getDate(),
+                hours = d.getHours(),
+                minutes = d.getMinutes(),
+                seconds = d.getSeconds();
+
+            let dateOutput = `${day}-${month}-${year} | ${hours}:${minutes}:${seconds}`;
+            return `${fileName}__${dateOutput}`;
         },
     },
 });

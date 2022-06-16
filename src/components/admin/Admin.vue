@@ -252,6 +252,10 @@ export default {
             flex-grow: 1;
             padding: 6rem 3rem;
 
+            @media screen and (max-width: 769px) {
+                padding: 6rem 1rem 6rem 0.5rem;
+            }
+
             & > div {
                 max-width: 100%;
             }

@@ -67,7 +67,7 @@
                         </tr>
                     </thead>
 
-                    <tbody>
+                    <tbody v-if="products && products.length > 0">
                         <tr v-for="(product, index) in products" :key="index">
                             <th>{{ (index += 1) }}</th>
                             <td>
@@ -87,9 +87,10 @@
                             </td>
                             <td v-else class="text-danger">(no tag)</td>
 
-                            <td class="description">
-                                <span v-html="product.description"></span>
-                            </td>
+                            <td
+                                class="description"
+                                v-html="product.description"
+                            ></td>
                             <td>
                                 <i
                                     class="fas fa-edit text-primary"
@@ -104,6 +105,15 @@
                                 ></i>
                             </td>
                         </tr>
+                    </tbody>
+                    <tbody v-else>
+                        <div class="mt-3">
+                            <h4 class="mb-0">No product available!</h4>
+                            <p class="mb-0">
+                                You have not uploaded any product yet. Please
+                                upload some products.
+                            </p>
+                        </div>
                     </tbody>
                 </table>
             </div>
@@ -137,7 +147,7 @@
                     <div class="modal-body">
                         <div class="row">
                             <!-- main product -->
-                            <div class="col-md-8">
+                            <div class="col-lg-7 col-xl-8">
                                 <div class="form-group">
                                     <input
                                         type="text"
@@ -158,7 +168,7 @@
                                 </div>
                             </div>
                             <!-- side details -->
-                            <div class="col-md-4">
+                            <div class="col-lg-5 col-xl-4">
                                 <h5>Product Details</h5>
                                 <hr />
 
@@ -225,29 +235,33 @@
                                     <input
                                         type="file"
                                         class="form-control"
+                                        multiple
                                         @change="uploadImage"
                                     />
                                 </div>
 
-                                <div class="form-group d-flex">
+                                <div
+                                    class="form-group d-flex"
+                                    v-if="
+                                        product.images &&
+                                        product.images.length > 0
+                                    "
+                                >
                                     <div
-                                        class="p-1"
+                                        class="img-wrapper"
                                         v-for="(image, index) in product.images"
                                         :key="index"
                                     >
-                                        <div class="img-wrapp">
-                                            <img
-                                                :src="image"
-                                                alt=""
-                                                width="80px"
-                                            />
-                                            <span
-                                                class="delete-img"
-                                                @click="
-                                                    deleteImage(image, index)
-                                                "
-                                                >X</span
-                                            >
+                                        <img
+                                            :src="image.imageUrl"
+                                            :alt="image.imageName"
+                                            width="95%"
+                                        />
+                                        <div
+                                            class="delete-img"
+                                            @click="deleteImage(image, index)"
+                                        >
+                                            X
                                         </div>
                                     </div>
                                 </div>
@@ -296,7 +310,7 @@ import $ from "jquery";
 import "@/mixins";
 import Swal from "sweetalert2";
 
-import { db } from "../firebase";
+import { db, fbase } from "../firebase";
 import IntroComponent from "../components/extra/intro-component.vue";
 // import preLoader from "../components/extra/preLoader.vue";
 
@@ -325,6 +339,10 @@ export default {
             },
             tagInput: null,
             tagsArray: [],
+
+            imageObj: null,
+            imageArray: [],
+
             isUpdateDetailsBtnClicked: false,
             originalProductDetails: {},
             isInValid: true,
@@ -389,7 +407,7 @@ export default {
             this.resetProductDetails();
         },
 
-        readProduct() {},
+        // readProduct() {},
 
         deleteProduct(product) {
             Swal.fire({
@@ -436,13 +454,82 @@ export default {
             // this.originalProductDetails = product;
         },
 
-        uploadImage(event) {
-            const image = event.target.files[0];
-            this.product.images = image;
-            console.log(image);
+        sendToFirebaseStorage(image) {
+            let productName = this.product.name;
+            let imagePath = "Products/" + productName;
+
+            let uploadedImageName = this.generateUniqueId(image.name);
+            // console.log(uploadedImageName);
+
+            var storageRef = fbase.storage().ref(imagePath);
+
+            const metadata = {
+                customMetadata: {
+                    activity: `${productName} product image`,
+                },
+            };
+
+            let uploadTask = storageRef
+                .child(`${uploadedImageName}`)
+                .put(image, metadata);
+
+            uploadTask.on(
+                "state_changed",
+                (snapshot) => {
+                    const progress =
+                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    console.log("Upload is " + progress + "% done");
+
+                    switch (snapshot.state) {
+                        case "paused":
+                            console.log("Upload is paused");
+                            break;
+                        case "running":
+                            console.log("Upload is running");
+                            break;
+                    }
+                },
+                (error) => {
+                    // console.log(error);
+
+                    const payload = {
+                        icon: "error",
+                        title: "Image Upload Failed!",
+                        text: error.message,
+                    };
+                    this.notificationToast(payload);
+                },
+                () => {
+                    uploadTask.snapshot.ref
+                        .getDownloadURL()
+                        .then((downloadUrl) => {
+                            this.imageObj = {
+                                imageName: image.name,
+                                imageUrl: downloadUrl,
+                            };
+
+                            this.imageArray.push(this.imageObj);
+
+                            if (this.imageArray && this.imageArray.length > 0) {
+                                this.product.images = this.imageArray;
+
+                                // console.log(this.product.images);
+                            }
+                        });
+                }
+            );
         },
 
-        deleteImage() {},
+        uploadImage(event) {
+            // let image = event.target.files[0];
+            const images = event.target.files;
+
+            images.forEach((image) => {
+                this.sendToFirebaseStorage(image);
+            });
+        },
+
+        // deleteImage() {},
 
         addTag() {
             this.tagsArray.push(this.removeComma(this.tagInput));
@@ -522,8 +609,8 @@ tbody tr:hover {
 
 tbody tr td i {
     font-size: 1.05rem;
-    margin-left: 0.4rem;
-    margin-right: 0.4rem;
+    // margin-left: 0.4rem;
+    margin-right: 0.5rem;
     transition: 0.3s ease-in;
 
     &:hover {
@@ -562,5 +649,34 @@ input {
 
 .tag-error {
     font-size: 13px;
+}
+
+.img-wrapper {
+    display: flex;
+    flex-direction: column-reverse;
+    flex-wrap: wrap;
+    justify-content: start;
+    width: 100%;
+    margin: 0 8px 0 0;
+
+    .delete-img {
+        background: var(--customSectionBg);
+        color: var(--customText);
+        width: 22px;
+        height: 22px;
+        line-height: 22px;
+        margin-left: auto;
+        border-radius: 100%;
+        text-align: center;
+    }
+
+    & img {
+        max-height: 160px;
+        -o-object-fit: cover;
+        object-fit: cover;
+        -o-object-position: top;
+        object-position: top;
+        padding: 5px 8px 0;
+    }
 }
 </style>
