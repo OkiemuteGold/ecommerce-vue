@@ -308,7 +308,7 @@
 import { VueEditor } from "vue2-editor";
 import $ from "jquery";
 import "@/mixins";
-import Swal from "sweetalert2";
+import { Swal, Toast } from "sweetalert2";
 
 import { db, fbase } from "../firebase";
 import IntroComponent from "../components/extra/intro-component.vue";
@@ -476,18 +476,42 @@ export default {
             uploadTask.on(
                 "state_changed",
                 (snapshot) => {
+                    let statusMessage;
                     const progress =
                         (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    console.log("Upload is " + progress + "% done");
 
-                    switch (snapshot.state) {
-                        case "paused":
-                            console.log("Upload is paused");
-                            break;
-                        case "running":
-                            console.log("Upload is running");
-                            break;
-                    }
+                    // console.log("Upload is " + progress + "% done");
+                    // statusMessage = "Upload is " + progress + "% done";
+
+                    Toast.fire({
+                        icon: "success",
+                        title: statusMessage,
+                        text: "Upload is " + progress + "% done",
+                        position: "top-end",
+                        showConfirmButton: true,
+                        showDenyButton: true,
+                        confirmButtonText: "Pause",
+                        denyButtonText: `Resume`,
+                        timer: progress,
+                        timerProgressBar: true,
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            snapshot.state = "paused";
+                        } else if (result.isDenied) {
+                            snapshot.state = "running";
+                        }
+
+                        switch (snapshot.state) {
+                            case "paused":
+                                // console.log("Upload is paused");
+                                statusMessage = "Upload is paused";
+                                break;
+                            case "running":
+                                // console.log("Upload is running");
+                                statusMessage = "Upload is running";
+                                break;
+                        }
+                    });
                 },
                 (error) => {
                     // console.log(error);

@@ -17,7 +17,7 @@ Vue.mixin({
     },
 
     filters: {
-        strippedContent: function (string) {
+        strippedContent(string) {
             return string.replace(/<\/?[^>]+>/gi, " ");
         },
 
@@ -43,12 +43,12 @@ Vue.mixin({
             });
         },
 
-        removeComma: function (value) {
+        removeComma(value) {
             value = value.replace(",", "");
             return value;
         },
 
-        addHash: function (value) {
+        addHash(value) {
             if (value.length > 0) {
                 if (value === ",") {
                     return true;
@@ -202,24 +202,25 @@ Vue.mixin({
                         this.$router.replace("/admin");
                     });
                 })
-                .catch(function (error) {
+                .catch((error) => {
                     const errorCode = error.code;
-                    let errorMessage;
+                    let title, errorMessage;
 
-                    if (errorCode === "auth/wrong-password") {
-                        errorMessage = "Wrong password.";
+                    if (errorCode == "auth/wrong-password") {
+                        title = "Wrong password!";
+                        errorMessage = null;
                     } else {
+                        title = "Login failed!";
                         errorMessage = error.message;
                     }
 
                     const payload = {
                         icon: "error",
-                        title: "Login failed!",
+                        title: title,
                         text: errorMessage,
                     };
 
                     this.notificationToast(payload);
-                    // console.log(error);
                 });
         },
 
@@ -247,7 +248,7 @@ Vue.mixin({
                     let title, errorMessage;
 
                     if (errorCode == "auth/weak-password") {
-                        title = "The password is too weak.";
+                        title = "Password too weak!";
                         errorMessage = null;
                     } else {
                         title = "Registration failed!";
