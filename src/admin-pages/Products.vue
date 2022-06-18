@@ -382,6 +382,24 @@ export default {
             this.isInValid = false;
         },
 
+        notifySuccess(title, text) {
+            const payload = {
+                icon: "success",
+                title: title,
+                text: text,
+            };
+            this.notificationToast(payload);
+        },
+
+        notifyError(error) {
+            const payload = {
+                icon: "error",
+                title: error.code,
+                text: error.message,
+            };
+            this.notificationToast(payload);
+        },
+
         // closeModal() {
         //     if (!this.isUpdateDetailsBtnClicked && this.modal == "edit") {
         //         this.product = this.originalProductDetails;
@@ -407,13 +425,10 @@ export default {
         addProduct() {
             this.$firestore.products.add(this.product);
 
-            const payload = {
-                icon: "success",
-                title: `${this.product.name} added sucessfully!`,
-                text: null,
-            };
+            let title = `${this.product.name} added sucessfully!`,
+                text = null;
+            this.notifySuccess(title, text);
 
-            this.notificationToast(payload);
             this.resetProductDetails();
         },
 
@@ -433,13 +448,9 @@ export default {
                     // console.log(product['.key']);
                     this.$firestore.products.doc(product.id).delete();
 
-                    // Swal.fire(`${product.name} has been deleted.`, "success");
-                    const payload = {
-                        icon: "success",
-                        title: `${product.name} has been deleted!`,
-                        text: null,
-                    };
-                    this.notificationToast(payload);
+                    let title = `${product.name} has been deleted!`,
+                        text = null;
+                    this.notifySuccess(title, text);
                 }
             });
         },
@@ -449,12 +460,9 @@ export default {
             this.resetProductDetails();
             $("#addProductModal").modal("hide");
 
-            const payload = {
-                icon: "success",
-                title: "Product details updated sucessfully!",
-                text: null,
-            };
-            this.notificationToast(payload);
+            let title = "Product details updated sucessfully!",
+                text = null;
+            this.notifySuccess(title, text);
             // this.isUpdateDetailsBtnClicked = true;
         },
 
@@ -493,23 +501,15 @@ export default {
                         "Upload Status: " + Math.floor(progress) + "%";
 
                     if (progress == 100) {
-                        const payload = {
-                            icon: "success",
-                            title: "Uploaded successful!",
-                            text: `File: ${image.name}`,
-                        };
+                        let title = "Uploaded successful!",
+                            text = `File: ${image.name}`;
+                        this.notifySuccess(title, text);
 
-                        this.notificationToast(payload);
                         this.statusMessage = null;
                     }
                 },
                 (error) => {
-                    const payload = {
-                        icon: "error",
-                        title: error.code,
-                        text: error.message,
-                    };
-                    this.notificationToast(payload);
+                    this.notifyError(error);
                 },
                 () => {
                     uploadTask.snapshot.ref
@@ -540,7 +540,26 @@ export default {
             });
         },
 
-        // deleteImage() {},
+        deleteImage(img, index) {
+            const image = fbase.storage().refFromURL(img.imageUrl);
+            console.log(image);
+
+            this.product.images.splice(index, 1);
+            this.statusMessage = `Deleting ${img.imageName}. Please wait!`;
+
+            image
+                .delete()
+                .then(() => {
+                    let title = `${img.imageName} was deleted!`,
+                        text = null;
+                    this.notifySuccess(title, text);
+
+                    this.statusMessage = null;
+                })
+                .catch((error) => {
+                    this.notifyError(error);
+                });
+        },
 
         addTag() {
             this.tagsArray.push(this.removeComma(this.tagInput));
@@ -678,7 +697,7 @@ input {
     flex-wrap: wrap;
     justify-content: start;
     width: 50%;
-    margin: 0 8px 0 0;
+    margin: 0 8px 8px 0;
 
     .delete-img {
         background: var(--customSectionBg);
@@ -690,6 +709,11 @@ input {
         border-radius: 100%;
         text-align: center;
         cursor: pointer;
+
+        &:hover {
+            background: var(--customBlueLight);
+            color: #fff;
+        }
     }
 
     & img {
