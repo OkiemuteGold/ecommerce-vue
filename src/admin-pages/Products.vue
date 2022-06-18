@@ -106,15 +106,16 @@
                             </td>
                         </tr>
                     </tbody>
-                    <tbody v-else>
-                        <div class="mt-3">
-                            <h4 class="mb-0">No product available!</h4>
-                            <p class="mb-0">
-                                You have not uploaded any product yet. Please
-                                upload some products.
-                            </p>
-                        </div>
-                    </tbody>
+
+                    <div class="pt-4 px-2" v-else>
+                        <h4 class="mb-3">No product available!</h4>
+                        <p class="mb-0">
+                            You have either not uploaded any product yet, or may
+                            be experiencing some network difficulties. Please
+                            check your internet connection, or upload some
+                            products if otherwise.
+                        </p>
+                    </div>
                 </table>
             </div>
         </section>
@@ -147,7 +148,7 @@
                     <div class="modal-body">
                         <div class="row">
                             <!-- main product -->
-                            <div class="col-lg-7 col-xl-8">
+                            <div class="col-lg-7">
                                 <div class="form-group">
                                     <input
                                         type="text"
@@ -167,8 +168,9 @@
                                     ></vue-editor>
                                 </div>
                             </div>
+
                             <!-- side details -->
-                            <div class="col-lg-5 col-xl-4">
+                            <div class="col-lg-5">
                                 <h5>Product Details</h5>
                                 <hr />
 
@@ -244,7 +246,8 @@
                                     class="form-group d-flex"
                                     v-if="
                                         product.images &&
-                                        product.images.length > 0
+                                        product.images.length > 0 &&
+                                        statusMessage == null
                                     "
                                 >
                                     <div
@@ -264,6 +267,10 @@
                                             X
                                         </div>
                                     </div>
+                                </div>
+
+                                <div v-else>
+                                    {{ statusMessage }}
                                 </div>
                             </div>
                         </div>
@@ -308,7 +315,7 @@
 import { VueEditor } from "vue2-editor";
 import $ from "jquery";
 import "@/mixins";
-import { Swal, Toast } from "sweetalert2";
+import Swal from "sweetalert2";
 
 import { db, fbase } from "../firebase";
 import IntroComponent from "../components/extra/intro-component.vue";
@@ -342,6 +349,7 @@ export default {
 
             imageObj: null,
             imageArray: [],
+            statusMessage: null,
 
             isUpdateDetailsBtnClicked: false,
             originalProductDetails: {},
@@ -389,6 +397,8 @@ export default {
             this.resetProductDetails();
             this.modal = mode;
             $("#addProductModal").modal("show");
+
+            this.statusMessage = null;
 
             $(".tags").show("slow");
             $(".tag-error").hide("slow");
@@ -476,49 +486,27 @@ export default {
             uploadTask.on(
                 "state_changed",
                 (snapshot) => {
-                    let statusMessage;
                     const progress =
                         (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
-                    // console.log("Upload is " + progress + "% done");
-                    // statusMessage = "Upload is " + progress + "% done";
+                    this.statusMessage =
+                        "Upload Status: " + Math.floor(progress) + "%";
 
-                    Toast.fire({
-                        icon: "success",
-                        title: statusMessage,
-                        text: "Upload is " + progress + "% done",
-                        position: "top-end",
-                        showConfirmButton: true,
-                        showDenyButton: true,
-                        confirmButtonText: "Pause",
-                        denyButtonText: `Resume`,
-                        timer: progress,
-                        timerProgressBar: true,
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            snapshot.state = "paused";
-                        } else if (result.isDenied) {
-                            snapshot.state = "running";
-                        }
+                    if (progress == 100) {
+                        const payload = {
+                            icon: "success",
+                            title: "Uploaded successful!",
+                            text: `File: ${image.name}`,
+                        };
 
-                        switch (snapshot.state) {
-                            case "paused":
-                                // console.log("Upload is paused");
-                                statusMessage = "Upload is paused";
-                                break;
-                            case "running":
-                                // console.log("Upload is running");
-                                statusMessage = "Upload is running";
-                                break;
-                        }
-                    });
+                        this.notificationToast(payload);
+                        this.statusMessage = null;
+                    }
                 },
                 (error) => {
-                    // console.log(error);
-
                     const payload = {
                         icon: "error",
-                        title: "Image Upload Failed!",
+                        title: error.code,
                         text: error.message,
                     };
                     this.notificationToast(payload);
@@ -536,7 +524,6 @@ export default {
 
                             if (this.imageArray && this.imageArray.length > 0) {
                                 this.product.images = this.imageArray;
-
                                 // console.log(this.product.images);
                             }
                         });
@@ -635,10 +622,17 @@ tbody tr td i {
     font-size: 1.05rem;
     // margin-left: 0.4rem;
     margin-right: 0.5rem;
+    -o-transition: 0.3s ease-in;
+    -moz-transition: 0.3s ease-in;
+    -webkit-transition: 0.3s ease-in;
     transition: 0.3s ease-in;
 
     &:hover {
         cursor: pointer;
+        -o-transform: scale(1.1);
+        -ms-transform: scale(1.1);
+        -moz-transform: scale(1.1);
+        -webkit-transform: scale(1.1);
         transform: scale(1.1);
     }
 }
@@ -658,6 +652,7 @@ input {
 
 .tags {
     display: flex;
+    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
 
     & p {
@@ -677,10 +672,12 @@ input {
 
 .img-wrapper {
     display: flex;
+    -ms-flex-direction: column-reverse;
     flex-direction: column-reverse;
+    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
     justify-content: start;
-    width: 100%;
+    width: 50%;
     margin: 0 8px 0 0;
 
     .delete-img {
@@ -692,15 +689,21 @@ input {
         margin-left: auto;
         border-radius: 100%;
         text-align: center;
+        cursor: pointer;
     }
 
     & img {
-        max-height: 160px;
+        min-height: 110px;
+        max-height: 125px;
         -o-object-fit: cover;
         object-fit: cover;
         -o-object-position: top;
         object-position: top;
-        padding: 5px 8px 0;
+        padding: 8px 5px 0;
+        border-radius: 20px;
+        cursor: -moz-zoom-out;
+        cursor: -webkit-zoom-out;
+        cursor: zoom-out;
     }
 }
 </style>
