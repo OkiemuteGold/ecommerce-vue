@@ -7,6 +7,7 @@ import UserLogin from '../views/UserLogin.vue'
 import Overview from '../admin-pages/Overview.vue'
 import Products from '../admin-pages/Products.vue'
 import Orders from '../admin-pages/Orders.vue'
+import Profile from '../admin-pages/Profile.vue'
 import Settings from '../admin-pages/Settings.vue'
 
 Vue.use(VueRouter)
@@ -48,6 +49,11 @@ const routes = [
                 path: 'orders',
                 name: 'Orders',
                 component: Orders,
+            },
+            {
+                path: 'profile',
+                name: 'Profile',
+                component: Profile,
             },
             {
                 path: 'settings',

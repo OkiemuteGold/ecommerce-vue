@@ -1,5 +1,5 @@
 import Vue from "vue";
-import { fbase } from "../firebase";
+import { fbase, db } from "../firebase";
 import $ from "jquery";
 import Swal from "sweetalert2";
 import Toast from "sweetalert2";
@@ -11,9 +11,9 @@ Vue.mixin({
         // ...mapGetters(["user", "AppId", "RequestId"]),
         // ...mapState(["oxfordvestURL"]),
 
-        isValid() {
-            return this.form.email !== "" && this.form.password !== "";
-        },
+        // isValid() {
+        //     return this.form.email !== "" && this.form.password !== "";
+        // },
     },
 
     filters: {
@@ -224,15 +224,32 @@ Vue.mixin({
                 });
         },
 
-        registerUser(email, password) {
+        addNewDocument(userId, fullName) {
+            db.collection("profiles")
+                .doc(userId).set({
+                    name: fullName,
+                })
+                .then(() => {
+                    console.log("Document successfully written!");
+                })
+                .catch((error) => {
+                    console.error("Error writing document: ", error);
+                });
+        },
+
+        register(form) {
             fbase
                 .auth()
                 .createUserWithEmailAndPassword(
-                    email,
-                    password
+                    form.email,
+                    form.password
                 )
-                .then(() => {
+                .then((user) => {
                     $("#loginModal").modal("hide");
+
+                    const userId = user.user.uid;
+                    this.addNewDocument(userId, form.fullName);
+
                     this.resetFormData();
 
                     const payload = {
@@ -270,7 +287,7 @@ Vue.mixin({
             // };
         },
 
-        recoverPassword(email) {
+        recover(email) {
             fbase
                 .auth()
                 .sendPasswordResetEmail(email)
@@ -289,7 +306,6 @@ Vue.mixin({
                         text: null,
                     };
                     this.notificationToast(payload);
-                    // console.log(error);
                 });
         },
 

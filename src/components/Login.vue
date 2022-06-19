@@ -127,9 +127,7 @@
                                         type="submit"
                                         class="btn"
                                         :disabled="!isValid"
-                                        @click.prevent="
-                                            login(form.email, form.password)
-                                        "
+                                        @click.prevent="loginUser"
                                     >
                                         Login
                                     </button>
@@ -178,9 +176,7 @@
                                         type="submit"
                                         class="btn"
                                         :disabled="!form.email"
-                                        @click.prevent="
-                                            recoverPassword(form.email)
-                                        "
+                                        @click.prevent="recoverPassword"
                                     >
                                         Recover Password
                                     </button>
@@ -292,12 +288,7 @@
                                             !form.fullName ||
                                             !hasAgreedToTerms
                                         "
-                                        @click.prevent="
-                                            registerUser(
-                                                form.email,
-                                                form.password
-                                            )
-                                        "
+                                        @click.prevent="registerUser"
                                     >
                                         Signup
                                         <!-- <span
@@ -329,6 +320,20 @@ export default {
             isForgotPassword: false,
             hasAgreedToTerms: false,
         };
+    },
+
+    methods: {
+        loginUser() {
+            this.login(this.form.email, this.form.password);
+        },
+
+        registerUser() {
+            this.register(this.form);
+        },
+
+        recoverPassword() {
+            this.recover(this.form.email);
+        },
     },
 };
 </script>

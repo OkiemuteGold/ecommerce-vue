@@ -1,4 +1,4 @@
-<template>
+script<template>
     <div class="page-wrapper default-theme sidebar-bg bg2 toggled">
         <nav
             id="sidebar"
@@ -15,6 +15,7 @@
                         <i class="fas fa-times"></i>
                     </div> -->
                 </div>
+
                 <!-- sidebar-header  -->
                 <div class="sidebar-item sidebar-header d-flex flex-nowrap">
                     <div class="user-pic">
@@ -28,13 +29,14 @@
                         <span class="user-name">
                             <strong>Main Admin</strong>
                         </span>
-                        <span class="user-role">Administrator</span>
+                        <span class="user-role">{{ user.email }}</span>
                         <span class="user-status">
                             <i class="fa fa-circle"></i>
                             <span>Online</span>
                         </span>
                     </div>
                 </div>
+
                 <!-- sidebar-search  -->
                 <div class="sidebar-item sidebar-search">
                     <div>
@@ -55,17 +57,27 @@
                         </div>
                     </div>
                 </div>
-                <!-- sidebar-menu  -->
 
+                <!-- sidebar-menu  -->
                 <div class="sidebar-item sidebar-menu">
                     <ul>
                         <li class="header-menu">
                             <span>Menu</span>
                         </li>
-                        <li>
-                            <router-link to="/admin/overview">
-                                <i class="fa fa-tachometer-alt"></i>
-                                <span class="menu-text">Overview</span>
+
+                        <li
+                            v-for="(route, index) in sidebarRoutes"
+                            :key="index"
+                        >
+                            <router-link :to="route.link">
+                                <i :class="route.icon"></i>
+                                <span class="menu-text">{{ route.name }}</span>
+
+                                <span
+                                    v-if="route.other !== null"
+                                    :class="`badge badge-pill ${route.other.class}`"
+                                    >{{ route.other.content }}</span
+                                >
                             </router-link>
                         </li>
 
@@ -89,21 +101,6 @@
                             </div>
                         </li> -->
 
-                        <li>
-                            <router-link to="/admin/products">
-                                <i class="fa fa-book"></i>
-                                <span class="menu-text">Products</span>
-                            </router-link>
-                        </li>
-                        <li>
-                            <router-link to="/admin/orders" class="pr-4">
-                                <i class="fa fa-shopping-cart"></i>
-                                <span class="menu-text">Orders</span>
-                                <span class="badge badge-pill badge-danger"
-                                    >3</span
-                                >
-                            </router-link>
-                        </li>
                         <li>
                             <a @click="logout">
                                 <i class="fa fa-power-off"></i>
@@ -147,9 +144,56 @@
 <script>
 import $ from "jquery";
 import "@/mixins";
+import { fbase } from "../../firebase";
 
 export default {
+    data() {
+        return {
+            sidebarRoutes: [
+                {
+                    name: "Profile",
+                    icon: "fa fa-user",
+                    link: "/admin/profile",
+                    other: null,
+                },
+                {
+                    name: "Overview",
+                    icon: "fa fa-chart-line",
+                    link: "/admin/overview",
+                    other: null,
+                },
+                {
+                    name: "Products",
+                    icon: "fab fa-amazon",
+                    link: "/admin/products",
+                    other: null,
+                },
+                {
+                    name: "Orders",
+                    icon: "fa fa-shopping-cart",
+                    link: "/admin/orders",
+                    other: {
+                        class: "badge-danger",
+                        content: 3,
+                    },
+                },
+            ],
+
+            user: {
+                name: null,
+                phoneNumber: null,
+                photoUrl: null,
+                emailVerified: null,
+                email: null,
+            },
+        };
+    },
+
     methods: {
+        // closeMenu() {
+        //     $(".page-wrapper").toggleClass("toggled");
+        // },
+
         openMenu() {
             if ($(".page-wrapper").hasClass("pinned")) {
                 $(".page-wrapper").removeClass("pinned sidebar-hovered");
@@ -158,6 +202,20 @@ export default {
             }
 
             $(".page-wrapper").toggleClass("toggled");
+        },
+
+        openMenuDropdown() {
+            // $(".sidebar-dropdown > a").click(function () {
+            $(".sidebar-submenu").slideUp(200);
+            if ($(this).parent().hasClass("active")) {
+                $(".sidebar-dropdown").removeClass("active");
+                $(this).parent().removeClass("active");
+            } else {
+                $(".sidebar-dropdown").removeClass("active");
+                $(this).next(".sidebar-submenu").slideDown(200);
+                $(this).parent().addClass("active");
+            }
+            // });
         },
 
         viewSidebarOnHover() {
@@ -174,24 +232,23 @@ export default {
             }
         },
 
-        // closeMenu() {
-        //     $(".page-wrapper").toggleClass("toggled");
-        // },
+        getUserInfo() {
+            const user = fbase.auth().currentUser;
+
+            if (user !== null) {
+                this.user.name = user.displayName;
+                this.user.phoneNumber = user.phoneNumber;
+                this.user.photoUrl = user.photoURL;
+                this.user.emailVerified = user.emailVerified;
+                this.user.email = user.email;
+
+                console.log(this.user);
+            }
+        },
     },
 
-    mounted() {
-        $(".sidebar-dropdown > a").click(function () {
-            $(".sidebar-submenu").slideUp(200);
-
-            if ($(this).parent().hasClass("active")) {
-                $(".sidebar-dropdown").removeClass("active");
-                $(this).parent().removeClass("active");
-            } else {
-                $(".sidebar-dropdown").removeClass("active");
-                $(this).next(".sidebar-submenu").slideDown(200);
-                $(this).parent().addClass("active");
-            }
-        });
+    created() {
+        this.getUserInfo();
     },
 };
 </script>
@@ -215,6 +272,11 @@ export default {
             overflow-y: auto;
             overflow-x: hidden;
         }
+
+        // .sidebar-header .user-info > span {
+        //     white-space: nowrap;
+        //     text-overflow: ellipsis;
+        // }
 
         .sidebar-footer {
             position: absolute;

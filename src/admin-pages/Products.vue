@@ -11,37 +11,6 @@
 
         <!-- Save product form -->
         <section class="row product-test pt-5">
-            <!-- <h3>Basic CRUD in Firebase and Vue.</h3>
-                <form class="add-product-form" @submit.prevent="addProduct">
-                    <div class="form-group">
-                        <input
-                            type="text"
-                            placeholder="Product Name"
-                            class="form-control"
-                            v-model="product.name"
-                            @input="checkForm"
-                        />
-                    </div>
-                    <div class="form-group">
-                        <input
-                            type="text"
-                            placeholder="Price"
-                            class="form-control"
-                            v-model="product.price"
-                            @input="checkForm"
-                        />
-                    </div>
-                    <div class="form-group">
-                        <button
-                            class="btn btn-primary"
-                            type="submit"
-                            :disabled="isInValid"
-                        >
-                            Add Product
-                        </button>
-                    </div>
-                </form> -->
-
             <div class="product-test-title col-12">
                 <h3 class="float-left">Product list</h3>
 
@@ -62,7 +31,6 @@
                             <th>Price</th>
                             <th>Tag</th>
                             <th>Description</th>
-                            <!-- <th>Image</th> -->
                             <th>Modify</th>
                         </tr>
                     </thead>
@@ -277,13 +245,6 @@
                     </div>
 
                     <div class="modal-footer">
-                        <!-- <button
-                            type="button"
-                            class="btn btn-secondary"
-                            @click="resetPrice || resetName"
-                        >
-                            Reset
-                        </button> -->
                         <button
                             type="button"
                             class="btn btn-primary"
@@ -542,7 +503,7 @@ export default {
 
         deleteImage(img, index) {
             const image = fbase.storage().refFromURL(img.imageUrl);
-            console.log(image);
+            // console.log(image);
 
             this.product.images.splice(index, 1);
             this.statusMessage = `Deleting ${img.imageName}. Please wait!`;
