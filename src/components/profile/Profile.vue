@@ -242,7 +242,7 @@ export default {
         updateProfile() {
             this.$firestore.profile.update(this.profile);
 
-            console.log(this.profile);
+            // console.log(this.profile);
 
             const payload = {
                 icon: "success",

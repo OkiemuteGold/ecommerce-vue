@@ -242,7 +242,7 @@ export default {
                 this.user.emailVerified = user.emailVerified;
                 this.user.email = user.email;
 
-                console.log(this.user);
+                // console.log(this.user);
             }
         },
     },
