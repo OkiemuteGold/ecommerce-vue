@@ -10,13 +10,17 @@ import jQuery from 'jquery';
 import { fbase } from './firebase';
 import VueFirestore from 'vue-firestore';
 import Swal from 'sweetalert2';
+import VueCarousel from 'vue-carousel';
+import Vue2Filters from 'vue2-filters'
 
 Vue.use(VueFirestore, {
     key: 'id',         // the name of the property. Default is '.key'.
     enumerable: true  //  whether it is enumerable or not. Default is true.
 });
 
-Vue.use(VueFirestore);
+// Vue.use(VueFirestore);
+Vue.use(VueCarousel);
+Vue.use(Vue2Filters)
 
 const Toast = Swal.mixin({
     toast: true,
@@ -28,6 +32,9 @@ window.Toast = Toast;
 
 import ScrollAnimation from "./directives/scroll_animation"
 Vue.directive("scroll_animation", ScrollAnimation);
+
+Vue.component('AddToCart', require('./components/AddToCart.vue').default);
+Vue.component('MiniCart', require('./components/MiniCart.vue').default);
 
 // Vue.filter("stripHTML", function (value) {
 //     const div = document.createElement("div")

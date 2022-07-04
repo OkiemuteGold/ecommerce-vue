@@ -11,9 +11,9 @@ Vue.mixin({
         // ...mapGetters(["user", "AppId", "RequestId"]),
         // ...mapState(["oxfordvestURL"]),
 
-        // isValid() {
-        //     return this.form.email !== "" && this.form.password !== "";
-        // },
+        isValid() {
+            return this.form.email !== "" && this.form.password !== "";
+        },
     },
 
     filters: {

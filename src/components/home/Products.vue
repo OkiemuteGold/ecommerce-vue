@@ -6,7 +6,7 @@
             </div>
 
             <div class="row">
-                <div class="col-md-6 col-lg-4">
+                <!-- <div class="col-md-6 col-lg-4">
                     <div class="card product-item p1" v-scroll_animation>
                         <img
                             src="img/products/product1.jpg"
@@ -77,6 +77,14 @@
                             >
                         </div>
                     </div>
+                </div> -->
+
+                <div
+                    class="col-md-6 col-lg-4"
+                    v-for="(product, index) in products"
+                    :key="index"
+                >
+                    <ProductList :product="product"></ProductList>
                 </div>
             </div>
         </div>
@@ -84,7 +92,24 @@
 </template>
 
 <script>
-export default {};
+import ProductList from "./ProductList.vue";
+import { db } from "../../firebase";
+
+export default {
+    components: { ProductList },
+
+    data() {
+        return {
+            products: [],
+        };
+    },
+
+    firestore() {
+        return {
+            products: db.collection("products"),
+        };
+    },
+};
 </script>
 
 <style lang="scss" scoped>

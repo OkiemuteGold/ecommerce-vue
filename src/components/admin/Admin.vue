@@ -318,6 +318,10 @@ export default {
                 padding: 6rem 1rem 6rem 0.5rem;
             }
 
+            @media screen and (max-width: 321px) {
+                padding: 6rem 0.5rem 6rem 0.25rem;
+            }
+
             & > div {
                 max-width: 100%;
             }
