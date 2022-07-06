@@ -6,7 +6,7 @@
                     :src="image.imageUrl"
                     class="card-img-top"
                     :alt="image.imageName"
-                    width="250px"
+                    width="200"
                 />
                 <p class="sold-text">Sold Out</p>
             </slide>
@@ -17,13 +17,8 @@
                 <h5 class="card-title">{{ product.name }}</h5>
                 <h6>{{ product.price | currency }}</h6>
             </div>
-            <!-- <p class="card-text">
-                {{ product.description }}
-            </p> -->
 
-            <div class="card-text" v-html="product.description"></div>
-
-            <!-- <a href="#" class="btn btn-outline-secondary btn-sm">Add to Cart</a> -->
+            <div class="card-text" v-html="description"></div>
 
             <AddToCart
                 :image="getImage(product.images)"
@@ -40,15 +35,33 @@
 export default {
     props: ["product"],
 
+    data() {
+        return {
+            description: this.$options.filters.truncate(
+                this.product.description,
+                55
+            ),
+        };
+    },
+
     methods: {
         getImage(images) {
-            console.log(images);
             return images[0];
         },
+
+        // getDescription() {
+        //     if (this.product.description) {
+        //         this.description = this.$options.filters.truncate(
+        //             this.product.description,
+        //             55
+        //         );
+        //     }
+        // },
     },
 
     mounted() {
-        this.product;
+        console.log(this.product);
+        // this.getDescription();
     },
 };
 </script>
@@ -92,10 +105,6 @@ export default {
     }
 }
 
-.products {
-    background: var(--customSectionBg);
-}
-
 .product-item {
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.075);
     overflow: hidden;
@@ -115,6 +124,15 @@ export default {
         width: 130px;
 
         transform: rotate(30deg);
+    }
+
+    .card-img-top {
+        // min-height: 200px;
+        height: 220px;
+        -o-object-fit: cover;
+        object-fit: cover;
+        -o-object-position: top;
+        object-position: top;
     }
 
     .sold-text {

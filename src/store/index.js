@@ -13,8 +13,8 @@ export default new Vuex.Store({
     getters: {
         totalPrice: state => {
             let total = 0;
-            state.cart.filter((item) => {
-                total += (item.productPrice * item.productQuantity);
+            state.cart.filter((product) => {
+                total += (product.productPrice * product.productQuantity);
             });
 
             return total;
@@ -22,13 +22,13 @@ export default new Vuex.Store({
     },
 
     mutations: {
-        addToCart(state, item) {
-            let found = state.cart.find(product => product.productId == item.productId);
+        addToCart(state, product) {
+            let currentProduct = state.cart.find(product => product.productId == product.productId);
 
-            if (found) {
-                found.productQuantity++;
+            if (currentProduct) {
+                currentProduct.productQuantity++;
             } else {
-                state.cart.push(item);
+                state.cart.push(product);
             }
 
             this.commit('saveData');
@@ -38,8 +38,8 @@ export default new Vuex.Store({
             window.localStorage.setItem('cart', JSON.stringify(state.cart));
         },
 
-        removeFromCart(state, item) {
-            let index = state.cart.indexOf(item);
+        removeFromCart(state, product) {
+            let index = state.cart.indexOf(product);
             state.cart.splice(index, 1);
 
             this.commit('saveData');

@@ -17,7 +17,7 @@ export default {
 
     data() {
         return {
-            item: {
+            product: {
                 productName: this.name,
                 productImage: this.image,
                 productPrice: this.price,
@@ -29,7 +29,7 @@ export default {
     methods: {
         addToCart() {
             $("#miniCart").modal("show");
-            this.$store.commit("addToCart", this.item);
+            this.$store.commit("addToCart", this.product);
         },
     },
 };

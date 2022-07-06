@@ -196,4 +196,16 @@ img {
 .ql-snow .ql-editor p {
     color: #212529;
 }
+
+.VueCarousel-pagination {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    .VueCarousel-dot-container,
+    .VueCarousel-dot {
+        margin-top: 0;
+    }
+}
 </style>
